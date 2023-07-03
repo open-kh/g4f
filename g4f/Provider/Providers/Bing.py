@@ -316,7 +316,8 @@ def run(generator):
         except StopAsyncIteration:
             break
 
-    #print('Done')
+    # print('Done')
+    # loop.close()
 
 
 def convert(messages):

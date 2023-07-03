@@ -31,6 +31,7 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
 
     json_data = {
         'message':base,
+        # 'stream': True,
         'temperature': 1,
         'presence_penalty': 0,
         'top_p': 1,

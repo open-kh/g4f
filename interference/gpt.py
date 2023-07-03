@@ -1,10 +1,9 @@
-import os
 import time
 import json
 import random
 
-from g4f import Model, ModelUtils, ChatCompletion, Provider
-from flask import Flask, request, Response
+from g4f import ModelUtils, ChatCompletion, Provider
+from flask import Flask, request
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -27,12 +26,8 @@ def chat_completions():
         'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
     }
 
-
     response = ChatCompletion.create(model=SetModel.name, provider=Provider.GetGpt, stream=streaming,
                                      messages=messages, auth="RXsIxyJc6hGsA")
-    # response = ChatCompletion.create(model="gpt-4", provider=Provider.Bing, stream=streaming,
-    #                                  messages=messages)
-
     if not streaming:
         while 'curl_cffi.requests.errors.RequestsError' in response:
             response = ChatCompletion.create(model=SetModel.name, provider=Provider.GetGpt, stream=streaming,
