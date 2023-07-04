@@ -14,7 +14,7 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
     chat += 'assistant: '
 
     response = requests.get('https://chatgpt.ai/gpt-4/')
-    # print(response.text)
+    print(response.text)
 
     nonce, post_id, _, bot_id = re.findall(r'data-nonce="(.*)"\n     data-post-id="(.*)"\n     data-url="(.*)"\n     data-bot-id="(.*)"\n     data-width', response.text)[0]
 

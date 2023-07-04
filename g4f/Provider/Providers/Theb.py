@@ -13,7 +13,7 @@ needs_auth = False
 def _create_completion(model: str, messages: list, stream: bool, **kwargs):
 
     path = os.path.dirname(os.path.realpath(__file__))
-    print(path)
+    # print(path)
     config = json.dumps({
         'messages': messages,
         'model': model}, separators=(',', ':'))
