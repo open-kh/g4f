@@ -26,12 +26,13 @@ def chat_completions():
         'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
     }
 
-    response = ChatCompletion.create(model=SetModel.name, provider=Provider.GetGpt, stream=streaming,
+    response = ChatCompletion.create(model=SetModel.name, provider=Provider.Theb, stream=streaming,
                                      messages=messages, auth="RXsIxyJc6hGsA")
     if not streaming:
         while 'curl_cffi.requests.errors.RequestsError' in response:
-            response = ChatCompletion.create(model=SetModel.name, provider=Provider.GetGpt, stream=streaming,
+            response = ChatCompletion.create(model=SetModel.name, provider=Provider.Theb, stream=streaming,
                                              messages=messages)
+            # print(response)
 
         completion_timestamp = int(time.time())
         completion_id = ''.join(random.choices(

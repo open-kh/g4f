@@ -1,4 +1,5 @@
 websocket-client
+Crypto
 requests
 tls-client
 pypasser

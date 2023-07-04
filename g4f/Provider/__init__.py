@@ -5,6 +5,7 @@ from .Providers import (
     Bing,
     Yqcloud,
     Theb,
+    ChatgptAi,
     Aichat,
     Bard,
     Vercel,

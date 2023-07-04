@@ -6,6 +6,18 @@ import random
 from g4f import Model, ModelUtils, ChatCompletion, Provider
 from flask import Flask, request, Response
 from flask_cors import CORS
+from keypair.encryption import encrypt, decrypt, public_key, plaintext
+
+# print('public_key', public_key)
+
+public_key = "pk-pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWMLtscqsdiKmhI"
+plaintext = "Hello, World!"
+
+# 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
+# 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
+
+# encoded_ciphertext = encrypt(public_key, plaintext)
+# print("Encoded Ciphertext:", encoded_ciphertext)
 
 app = Flask(__name__)
 CORS(app)
@@ -15,6 +27,12 @@ def chat_completions():
     streaming = request.json.get('stream', False)
     model = request.json.get('model', 'gpt-3.5-turbo')
     messages = request.json.get('messages')
+    # barer = (request.json.get('Authorization')).split(" ")[1]
+    
+
+    # if barer!= fernet.decrypt(barer).decode():
+    #     return Response(status=401)
+
     SetModel = ModelUtils.convert[model]
 
     models = {
@@ -26,6 +44,12 @@ def chat_completions():
         'falcon-40b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-40b-v1',
         'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
     }
+
+    # print("original string: ", message)
+    # print("encrypted string: ", encMessage)
+    # decMessage = fernet.decrypt(encMessage).decode()
+ 
+    # print("decrypted string: ", decMessage)
 
 
     response = ChatCompletion.create(model=SetModel.name, provider=Provider.GetGpt, stream=streaming,

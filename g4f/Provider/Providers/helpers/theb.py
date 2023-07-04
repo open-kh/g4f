@@ -5,6 +5,7 @@ from curl_cffi import requests
 
 config = json.loads(sys.argv[1])
 prompt = config['messages'][-1]['content']
+# print(prompt)
 
 headers = {
     'authority': 'chatbot.theb.ai',
