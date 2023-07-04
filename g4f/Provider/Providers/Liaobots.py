@@ -55,7 +55,7 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
         'model': models[model],
         'messages': messages,
         'key': 'RXsIxyJc6hGsA',
-        'prompt': "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
+        'prompt': "You are Open Brain, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
     }
 
     response = requests.post('https://liaobots.com/api/chat',
