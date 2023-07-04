@@ -27,11 +27,14 @@ def chat_completions():
     streaming = request.json.get('stream', False)
     model = request.json.get('model', 'gpt-3.5-turbo')
     messages = request.json.get('messages')
-    # barer = (request.json.get('Authorization')).split(" ")[1]
-    
+    barer = request.headers.get('Authorization')
+    if barer is None:
+        barer = 'unknown'
+    else:
+        barer = barer.strip().split(" ")[1] if len(barer.strip().split(" ")) > 1 else 'unknown'
 
-    # if barer!= fernet.decrypt(barer).decode():
-    #     return Response(status=401)
+    if barer != public_key:
+        return Response(response='Unauthorized', status=401)
 
     SetModel = ModelUtils.convert[model]
 
