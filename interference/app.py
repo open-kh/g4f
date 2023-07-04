@@ -10,7 +10,7 @@ from keypair.encryption import encrypt, decrypt, public_key, plaintext
 
 # print('public_key', public_key)
 
-public_key = "pk-pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWMLtscqsdiKmhI"
+public_key = "pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWMLtscqsdiKmhI"
 plaintext = "Hello, World!"
 
 # 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
@@ -33,7 +33,7 @@ def chat_completions():
     else:
         barer = barer.strip().split(" ")[1] if len(barer.strip().split(" ")) > 1 else 'unknown'
 
-    if barer != public_key:
+    if barer != f"pk-{public_key}":
         return Response(response='Unauthorized', status=401)
 
     SetModel = ModelUtils.convert[model]
