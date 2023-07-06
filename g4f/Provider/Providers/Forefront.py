@@ -18,7 +18,7 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
         "messagePersona": "default",
         "model": "gpt-3.5-turbo",
         'messages': messages[:-1] if len(messages) > 1 else [],
-        'internetMode': 'auto',
+        'internetMode': 'never',
         "hidden": True
     }
     SIGN="28c3b1cc9f29f581b377206e9a9c7e6b261cf325909e8e4c6552089a986043f8a679d49f2d0beb88b80f670a6aa55ef0510a3a23cd6f31ef41f3e7b5dee497ac"
