@@ -54,6 +54,7 @@ class Completion:
         while not Completion.stream_completed or not Completion.message_queue.empty():
             try:
                 message = Completion.message_queue.get(timeout=0.01)
+                # print(message)
                 for message in findall(Completion.regex, message):
                     message_json = loads(Completion.part1 + message + Completion.part2)
                     Completion.last_msg_id = message_json['id']

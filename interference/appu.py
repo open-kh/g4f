@@ -55,13 +55,15 @@ def chat_completions():
     # print("decrypted string: ", decMessage)
 
 
-    response = ChatCompletion.create(model=SetModel.name, stream=streaming,
+    response = ChatCompletion.create(model=SetModel.name, provider=Provider.You, stream=streaming,
                                      messages=messages, auth="RXsIxyJc6hGsA")
+    # response = ChatCompletion.create(model="gpt-4", provider=Provider.Bing, stream=streaming,
+    #                                  messages=messages)
 
     if not streaming:
         while 'curl_cffi.requests.errors.RequestsError' in response:
-            response = ChatCompletion.create(model=SetModel.name, stream=streaming,
-                                             messages=messages, auth="RXsIxyJc6hGsA")
+            response = ChatCompletion.create(model=SetModel.name, provider=Provider.You, stream=streaming,
+                                             messages=messages)
 
         completion_timestamp = int(time.time())
         completion_id = ''.join(random.choices(
