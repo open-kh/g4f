@@ -17,13 +17,21 @@ models = {
     'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
 }
 
+session = requests.Session()
+
 def _create_completion(model: str, messages: list, stream: bool, **kwargs):
+    global session
+    if not session:
+        # Send a new request and store the session
+        session = requests.Session()
+    else:
+        print(session)
+
     conversation = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k. Follow the user's instructions carefully. Respond using markdown."
     for message in messages:
         conversation += '%s: %s\n' % (message['role'], message['content'])
     
     conversation += 'assistant: '
-    session = requests.Session()
 
     response = session.get("https://gpt-gm.h2o.ai/")
     headers = {
@@ -68,6 +76,7 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
         "parameters": {
             "temperature": kwargs.get('temperature', 0.4),
             "truncate": kwargs.get('truncate', 2048),
+            # "truncate": kwargs.get('truncate', 1000),
             "max_new_tokens": kwargs.get('max_new_tokens', 1024),
             "do_sample": kwargs.get('do_sample', True),
             "repetition_penalty": kwargs.get('repetition_penalty', 1.2),
