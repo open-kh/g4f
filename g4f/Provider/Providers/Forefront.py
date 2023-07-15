@@ -4,7 +4,7 @@ import requests
 from ...typing import sha256, Dict, get_type_hints
 
 url = 'https://chat.forefront.ai'
-model = ['gpt-3.5-turbo']
+model = ['gpt-3.5-turbo', 'gpt-4']
 supports_stream = True
 needs_auth = False
 
@@ -16,7 +16,8 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
         "parentId": "98865671-2ef3-43ad-b532-0f93e81536ef",
         "workspaceId": "98865671-2ef3-43ad-b532-0f93e81536ef",
         "messagePersona": "default",
-        "model": "gpt-3.5-turbo",
+        "model": "gpt-4",
+        # "model": "gpt-3.5-turbo",
         'messages': messages[:-1] if len(messages) > 1 else [],
         'internetMode': 'never',
         "hidden": True
@@ -37,5 +38,6 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
         if b'delta' in token:
             token = json.loads(token.decode().split('data: ')[1])['delta']
             yield (token)
+            
 params = f'g4f.Providers.{os.path.basename(__file__)[:-3]} supports: ' + \
     '(%s)' % ', '.join([f"{name}: {get_type_hints(_create_completion)[name].__name__}" for name in _create_completion.__code__.co_varnames[:_create_completion.__code__.co_argcount]])

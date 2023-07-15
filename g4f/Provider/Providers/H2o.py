@@ -17,64 +17,51 @@ models = {
     'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
 }
 
+client = Session()
+client.headers = {
+    'authority': 'gpt-gm.h2o.ai',
+    'origin': 'https://gpt-gm.h2o.ai',
+    # 'pragma': 'no-cache',
+    'referer': 'https://gpt-gm.h2o.ai/',
+    'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Opera";v="100"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'document',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-site': 'same-origin',
+    'sec-fetch-user': '?1',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 OPR/100.0.0.0',
+}
+
+client.get('https://gpt-gm.h2o.ai/')
+client_response = client.post('https://gpt-gm.h2o.ai/settings', data={
+    'ethicsModalAccepted': 'true',
+    'shareConversationsWithModelAuthors': 'true',
+    'ethicsModalAcceptedAt': '',
+    'activeModel': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-40b-v1',
+    'searchEnabled': 'true',
+})
+
 def _create_completion(model: str, messages: list, stream: bool, **kwargs):
     conversation = 'instruction: this is a conversation beween, a user and an AI assistant, respond to the latest message, referring to the conversation if needed\n'
     for message in messages:
         conversation += '%s: %s\n' % (message['role'], message['content'])
     conversation += 'assistant:'
-    
-    client = Session()
-    client.headers = {
-        'authority': 'gpt-gm.h2o.ai',
-        'origin': 'https://gpt-gm.h2o.ai',
-        'referer': 'https://gpt-gm.h2o.ai/',
-        'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Windows"',
-        'sec-fetch-dest': 'document',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-site': 'same-origin',
-        'sec-fetch-user': '?1',
-        'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-    }
-
-    client.get('https://gpt-gm.h2o.ai/')
-    response = client.post('https://gpt-gm.h2o.ai/settings', data={
-        'ethicsModalAccepted': 'true',
-        'shareConversationsWithModelAuthors': 'true',
-        'ethicsModalAcceptedAt': '',
-        'activeModel': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-40b-v1',
-        'searchEnabled': 'true',
-    })
-
-    headers = {
-        'authority': 'gpt-gm.h2o.ai',
-        'accept': '*/*',
-        'accept-language': 'en,fr-FR;q=0.9,fr;q=0.8,es-ES;q=0.7,es;q=0.6,en-US;q=0.5,am;q=0.4,de;q=0.3',
-        'origin': 'https://gpt-gm.h2o.ai',
-        'referer': 'https://gpt-gm.h2o.ai/',
-        'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Windows"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-    }
 
     json_data = {
         'model': models[model]
     }
 
     response = client.post('https://gpt-gm.h2o.ai/conversation',
-                            headers=headers, json=json_data)
-    # print(response.json())
+                            headers=client_response.headers, json=json_data)
+    print(response.json())
     conversationId = response.json()['conversationId']
-    # conversationId = "64a7d717556bacf2a0605c59"
+    # conversationId = "64b225a0f99ac38fdeb1c185"
 
 
-    completion = client.post(f'https://gpt-gm.h2o.ai/conversation/{conversationId}', stream=True, json = {
+    # completion = client.post("https://gpt-gm.h2o.ai/conversation/64b225a0f99ac38fdeb1c185", stream=True, headers=client_response.headers, json = {
+    completion = client.post(f'https://gpt-gm.h2o.ai/conversation/{conversationId}', stream=True, headers=client_response.headers, json = {
         'inputs': conversation,
         'parameters': {
             'temperature': kwargs.get('temperature', 0.4),
@@ -93,6 +80,7 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
             'web_search_id': ''
         }
     })
+    # print(completion)
 
     for line in completion.iter_lines():
         if b'data' in line:

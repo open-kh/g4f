@@ -22,12 +22,24 @@ plaintext = "Hello, World!"
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route("/chat/completions", methods=['POST'])
 def chat_completions():
     streaming = request.json.get('stream', False)
-    model = request.json.get('model', 'gpt-3.5-turbo-16k')
+    model = request.json.get('model', 'gpt-3.5-turbo')
     messages = request.json.get('messages')
     barer = request.headers.get('Authorization')
+    models = {
+        'gpt-4': 'gpt-4',
+        'gpt-4-0613': 'gpt-4-0613',
+        'gpt-3.5-turbo-16k': 'gpt-3.5-16k',
+        'gpt-3.5-turbo': 'gpt-3.5-turbo-0301',
+        'gpt-3.5-turbo-0613': 'gpt-3.5-turbo-0613',
+        'falcon-7b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-7b-v3',
+        'falcon-40b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-40b-v1',
+        'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
+    }
+
     if barer is None:
         barer = 'unknown'
     else:
@@ -37,17 +49,6 @@ def chat_completions():
         return Response(response='Unauthorized', status=401)
 
     SetModel = ModelUtils.convert[model]
-
-    models = {
-        'gpt-4': 'gpt-4',
-        'gpt-4-0613': 'gpt-4-0613',
-        'gpt-3.5-turbo-16k': 'GPT-3.5-16k',
-        'gpt-3.5-turbo': 'gpt-3.5-turbo-0301',
-        'gpt-3.5-turbo-0613': 'gpt-3.5-turbo-0613',
-        'falcon-7b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-7b-v3',
-        'falcon-40b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-40b-v1',
-        'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
-    }
 
     # print("original string: ", message)
     # print("encrypted string: ", encMessage)

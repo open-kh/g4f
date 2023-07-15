@@ -20,6 +20,7 @@ def _create_completion(model: str, messages: list, stream: bool, temperature: fl
     }
     response = requests.post("http://supertest.lockchat.app/v1/chat/completions", 
                             json=payload, headers=headers, stream=True)
+    print(response)
     for token in response.iter_lines():
         if b'The model: `gpt-4` does not exist' in token:
             print('error, retrying...')
