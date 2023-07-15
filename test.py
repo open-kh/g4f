@@ -10,13 +10,13 @@ from gpt4free.quora import Poe
 #     system_prompt='you are ChatGPT a large language model ...'
 # )
 
-message = []
 while True:
-    prompt = input("请输入问题：")
-    message.append({"role": "user","content": prompt})
-    text = ""
-    for chunk in gptworldAi.ChatCompletion.create(message,'127.0.0.1:7890'):
-        text = text+chunk
-        print(chunk, end="", flush=True)
+    x = input("User: ")
+    if x == "quit":
+        break
+    if x == "ai":
+        print("AI: ", end="")
+        for chunk in deepai.Completion.create(x):
+            print(chunk, end="", flush=True)
         print()
-        message.append({"role": "assistant", "content": text})
+        

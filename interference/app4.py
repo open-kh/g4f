@@ -54,9 +54,25 @@ def chat_completions():
  
     # print("decrypted string: ", decMessage)
 
+    # https://liaobots.work/en?ic=TR0NX9 // get code
+    # https://liaobots.work/_next/data/4nxMC017cSo0fRuOmTTYj/en.json?ic=TR0NX9
+    
+    # https://liaobots.work?ic=MGJ7P8
+    # https://liaobots.work?ic=1YN4MT
+    # https://liaobots.work?ic=Z8WQYS
+    authkey = ['Co23kV7sPU45t', '7pZ9moAGkqR2i', 'RXsIxyJc6hGsA','4fDGzgKsEEW1q','tIUtcIhFwXZQv', 'DD3H9jy9gtf0L','iW6fkRHUGV8tm']
 
+    # setTimeout(() => {
+    #     $.post("/recaptcha/api/login", {token: 'abcdefghijklmnopqrst'}, res => {
+    #         if (res.code != 200) {
+    #             layer.msg(res.msg);
+    #             return;
+    #         }
+    #         window.location.reload();
+    #     });
+    # }, 1300);
     response = ChatCompletion.create(model=SetModel.name, provider=Provider.Liaobots, stream=streaming,
-                                     messages=messages, auth="RXsIxyJc6hGsA")
+                                     messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
     # response = ChatCompletion.create(model="gpt-4", provider=Provider.Bing, stream=streaming,
     #                                  messages=messages)
 

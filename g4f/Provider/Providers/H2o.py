@@ -71,7 +71,7 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
                             headers=headers, json=json_data)
     # print(response.json())
     conversationId = response.json()['conversationId']
-    # conversationId = "64a1ec2bb99fcbef663b5d4a"
+    # conversationId = "64a7d717556bacf2a0605c59"
 
 
     completion = client.post(f'https://gpt-gm.h2o.ai/conversation/{conversationId}', stream=True, json = {

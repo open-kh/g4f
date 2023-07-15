@@ -25,7 +25,7 @@ CORS(app)
 @app.route("/chat/completions", methods=['POST'])
 def chat_completions():
     streaming = request.json.get('stream', False)
-    model = request.json.get('model', 'gpt-3.5-turbo')
+    model = request.json.get('model', 'falcon_40b')
     messages = request.json.get('messages')
     barer = request.headers.get('Authorization')
     if barer is None:
@@ -55,12 +55,12 @@ def chat_completions():
     # print("decrypted string: ", decMessage)
 
 
-    response = ChatCompletion.create(model=SetModel.name, stream=streaming,
+    response = ChatCompletion.create(model=SetModel.name, provider=Provider.Theb, stream=streaming,
                                      messages=messages, auth="RXsIxyJc6hGsA")
 
     if not streaming:
         while 'curl_cffi.requests.errors.RequestsError' in response:
-            response = ChatCompletion.create(model=SetModel.name, stream=streaming,
+            response = ChatCompletion.create(model=SetModel.name, provider=Provider.H2o, stream=streaming,
                                              messages=messages, auth="RXsIxyJc6hGsA")
 
         completion_timestamp = int(time.time())
@@ -74,8 +74,8 @@ def chat_completions():
             'model': models[model],
             'usage': {
                 'prompt_tokens': None,
-                'completion_tokens': None,
-                'total_tokens': None
+                'completion_tokens': len(response),
+                'total_tokens': len(response)
             },
             'choices': [{
                 'message': {
@@ -97,7 +97,7 @@ def chat_completions():
                 'id': f'chatcmpl-{completion_id}',
                 'object': 'chat.completion.chunk',
                 'created': completion_timestamp,
-                'model': 'gpt-3.5-turbo-0301',
+                'model': models[model],
                 'choices': [
                     {
                         'delta': {
