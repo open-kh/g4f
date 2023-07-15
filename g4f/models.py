@@ -7,10 +7,16 @@ class Model:
         base_provider: str
         best_provider: str
 
+    class gpt_35_turbo_16k:
+        name: str = 'gpt-3.5-turbo-16k'
+        base_provider: str = 'openai'
+        best_provider: Provider.Provider = Provider.EasyChat
+
     class gpt_35_turbo:
         name: str = 'gpt-3.5-turbo'
         base_provider: str = 'openai'
         best_provider: Provider.Provider = Provider.Forefront
+        best_providers: list = [ Provider.Forefront, Provider.EasyChat]
 
     class gpt_4:
         name: str = 'gpt-4'
@@ -155,6 +161,7 @@ class Model:
     
 class ModelUtils:
     convert: dict = {
+        'gpt-3.5-turbo-16k': Model.gpt_35_turbo_16k,
         'gpt-3.5-turbo': Model.gpt_35_turbo,
         'gpt-4': Model.gpt_4,
         

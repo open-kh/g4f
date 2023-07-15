@@ -1,10 +1,16 @@
+import os
 import time
 import json
 import random
 
-from g4f import ModelUtils, ChatCompletion, Provider
-from flask import Flask, request
+from g4f import Model, ModelUtils, ChatCompletion, Provider
+from flask import Flask, request, Response
 from flask_cors import CORS
+from keypair.encryption import encrypt, decrypt, public_key, plaintext
+
+
+public_key = "pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWMLtscqsdiKmhI"
+plaintext = "Hello, World!"
 
 app = Flask(__name__)
 CORS(app)
@@ -12,14 +18,23 @@ CORS(app)
 @app.route("/chat/completions", methods=['POST'])
 def chat_completions():
     streaming = request.json.get('stream', False)
-    model = request.json.get('model', 'gpt-3.5-turbo')
+    model = request.json.get('model', 'falcon-40b')
     messages = request.json.get('messages')
+    barer = request.headers.get('Authorization')
+    if barer is None:
+        barer = 'unknown'
+    else:
+        barer = barer.strip().split(" ")[1] if len(barer.strip().split(" ")) > 1 else 'unknown'
+
+    if barer != f"pk-{public_key}":
+        return Response(response='Unauthorized', status=401)
+
     SetModel = ModelUtils.convert[model]
 
     models = {
         'gpt-4': 'gpt-4',
         'gpt-4-0613': 'gpt-4-0613',
-        'gpt-3.5-turbo-16k': 'gpt-3.5-turbo-16k',
+        'gpt-3.5-turbo-16k': 'GPT-3.5-16k',
         'gpt-3.5-turbo': 'gpt-3.5-turbo-0301',
         'gpt-3.5-turbo-0613': 'gpt-3.5-turbo-0613',
         'falcon-7b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-7b-v3',
@@ -27,12 +42,11 @@ def chat_completions():
         'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
     }
 
-    response = ChatCompletion.create(model=SetModel.name, provider=Provider.EasyChat, stream=streaming,
-                                     messages=messages, auth="RXsIxyJc6hGsA")
+    response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages)
     if not streaming:
         while 'curl_cffi.requests.errors.RequestsError' in response:
-            response = ChatCompletion.create(model=SetModel.name, provider=Provider.EasyChat, stream=streaming,
-                                             messages=messages)
+            response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages)
+
         completion_timestamp = int(time.time())
         completion_id = ''.join(random.choices(
             'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
@@ -67,7 +81,7 @@ def chat_completions():
                 'id': f'chatcmpl-{completion_id}',
                 'object': 'chat.completion.chunk',
                 'created': completion_timestamp,
-                'model': 'gpt-3.5-turbo-0301',
+                'model': 'busybox',
                 'choices': [
                     {
                         'delta': {
