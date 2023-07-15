@@ -48,11 +48,13 @@ def chat_completions():
         'falcon-40b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-40b-v1',
         'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
     }
+    
+    authkey = ['Co23kV7sPU45t', '7pZ9moAGkqR2i', 'RXsIxyJc6hGsA','4fDGzgKsEEW1q','tIUtcIhFwXZQv', 'DD3H9jy9gtf0L','iW6fkRHUGV8tm']
 
-    response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages)
+    response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
     if not streaming:
         while 'curl_cffi.requests.errors.RequestsError' in response:
-            response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages)
+            response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
 
         completion_timestamp = int(time.time())
         completion_id = ''.join(random.choices(

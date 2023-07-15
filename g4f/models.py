@@ -15,8 +15,8 @@ class Model:
     class gpt_35_turbo:
         name: str = 'gpt-3.5-turbo'
         base_provider: str = 'openai'
-        best_provider: Provider.Provider = Provider.Forefront
-        best_providers: list = [ Provider.Forefront, Provider.EasyChat]
+        best_provider: Provider.Provider = Provider.Liaobots
+        best_providers: list = [ Provider.Liaobots, Provider.Forefront, Provider.EasyChat]
 
     class gpt_4:
         name: str = 'gpt-4'
