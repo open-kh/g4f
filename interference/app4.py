@@ -25,7 +25,7 @@ CORS(app)
 @app.route("/chat/completions", methods=['POST'])
 def chat_completions():
     streaming = request.json.get('stream', False)
-    model = request.json.get('model', 'gpt-3.5-turbo')
+    model = request.json.get('model', 'gpt-3.5-turbo-16k')
     messages = request.json.get('messages')
     barer = request.headers.get('Authorization')
     if barer is None:
@@ -41,6 +41,7 @@ def chat_completions():
     models = {
         'gpt-4': 'gpt-4',
         'gpt-4-0613': 'gpt-4-0613',
+        'gpt-3.5-turbo-16k': 'GPT-3.5-16k',
         'gpt-3.5-turbo': 'gpt-3.5-turbo-0301',
         'gpt-3.5-turbo-0613': 'gpt-3.5-turbo-0613',
         'falcon-7b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-7b-v3',
