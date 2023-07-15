@@ -49,38 +49,10 @@ def chat_completions():
         'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
     }
 
-    # print("original string: ", message)
-    # print("encrypted string: ", encMessage)
-    # decMessage = fernet.decrypt(encMessage).decode()
- 
-    # print("decrypted string: ", decMessage)
-
-    # https://liaobots.work/en?ic=TR0NX9 // get code
-    # https://liaobots.work/_next/data/4nxMC017cSo0fRuOmTTYj/en.json?ic=TR0NX9
-    
-    # https://liaobots.work?ic=MGJ7P8
-    # https://liaobots.work?ic=1YN4MT
-    # https://liaobots.work?ic=Z8WQYS
-    authkey = ['Co23kV7sPU45t', '7pZ9moAGkqR2i', 'RXsIxyJc6hGsA','4fDGzgKsEEW1q','tIUtcIhFwXZQv', 'DD3H9jy9gtf0L','iW6fkRHUGV8tm']
-
-    # setTimeout(() => {
-    #     $.post("/recaptcha/api/login", {token: 'abcdefghijklmnopqrst'}, res => {
-    #         if (res.code != 200) {
-    #             layer.msg(res.msg);
-    #             return;
-    #         }
-    #         window.location.reload();
-    #     });
-    # }, 1300);
-    response = ChatCompletion.create(model=SetModel.name, provider=Provider.Forefront, stream=streaming,
-                                     messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
-    # response = ChatCompletion.create(model="gpt-4", provider=Provider.Bing, stream=streaming,
-    #                                  messages=messages)
-
+    response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages)
     if not streaming:
         while 'curl_cffi.requests.errors.RequestsError' in response:
-            response = ChatCompletion.create(model=SetModel.name, provider=Provider.Forefront, stream=streaming,
-                                             messages=messages)
+            response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages)
 
         completion_timestamp = int(time.time())
         completion_id = ''.join(random.choices(
@@ -116,7 +88,7 @@ def chat_completions():
                 'id': f'chatcmpl-{completion_id}',
                 'object': 'chat.completion.chunk',
                 'created': completion_timestamp,
-                'model': 'gpt-3.5-turbo-0301',
+                'model': 'busybox',
                 'choices': [
                     {
                         'delta': {
