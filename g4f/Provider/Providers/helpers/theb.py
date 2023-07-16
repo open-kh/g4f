@@ -1,10 +1,16 @@
 import json
 import sys
 from re import findall
+import queue
 from curl_cffi import requests
+# import requests
 
 config = json.loads(sys.argv[1])
-prompt = config['messages'][-1]['content']
+prompt = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k. Follow the user's instructions carefully. Respond using markdown."
+for message in config['messages']:
+    prompt += '%s: %s\n' % (message['role'], message['content'])
+
+prompt += 'assistant: '
 # print(prompt,config)
 # print("Phearum")
 
@@ -29,20 +35,35 @@ json_data = {
     'options': {}
 }
 
-def format(chunk):
+
+chunks_queue = queue.Queue()
+error = None
+response = None
+# text = ''
+def callback(chunk):
+    # global text
     try:
+        # text += chunk
+        # print(chunk)
         completion_chunk = findall(r'content":"(.*)"},"fin', chunk.decode())[0]
-        print(completion_chunk, flush=True, end='')
+        # print(completion_chunk)
+        print(completion_chunk,flush=True, end='')
 
     except Exception as e:
         print(f'[ERROR] an error occured, retrying... | [[{chunk.decode()}]]', flush=True)
         return
 
 while True:
+    # text = ''
     try: 
-        response = requests.post('https://chatbot.theb.ai/api/chat-process', 
-                            headers=headers, json=json_data, content_callback=format, impersonate='chrome110')
-        
+        requests.post('https://chatbot.theb.ai/api/chat-process', headers=headers, json=json_data, content_callback=callback, impersonate='chrome110')
+        # response = requests.post('https://chatbot.theb.ai/api/chat-process', headers=headers, data=json.dumps(json_data))
+        # for token in response:
+        #     if b'delta' in token:
+        #         token = json.loads(token.decode().split('data: ')[1])['delta']
+        #         print(token)
+        # print(text)
+
         exit(0)
     
     except Exception as e:
