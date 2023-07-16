@@ -134,7 +134,7 @@ def image_generation():
         "text": text
     })
     token = response.json()
-    completion_data = f"Sure, Here is the image:\n[![Image Generator]({token['data']['link']})]({token['data']['link']})\nHave you like it?"
+    completion_data = f"Sure, Here is the image:\n[![Image Generator]({token['data']['link']})]({token['data']['link']})\nDid you like it?"
 
     return Response(completion_data, content_type='application/json')
 
