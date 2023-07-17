@@ -53,10 +53,10 @@ def chat_completions():
     
     authkey = ['Co23kV7sPU45t', '7pZ9moAGkqR2i', 'RXsIxyJc6hGsA','4fDGzgKsEEW1q','tIUtcIhFwXZQv', 'DD3H9jy9gtf0L','iW6fkRHUGV8tm']
 
-    response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
+    response = ChatCompletion.create(model=SetModel.name, provider=Provider.EasyChat,  stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
     if not streaming:
         while 'curl_cffi.requests.errors.RequestsError' in response:
-            response = ChatCompletion.create(model=SetModel.name, stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
+            response = ChatCompletion.create(model=SetModel.name,provider=Provider.EasyChat, stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
 
         completion_timestamp = int(time.time())
         completion_id = ''.join(random.choices(

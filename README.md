@@ -7,20 +7,21 @@ Docker is for now not available but I would be happy if someone contributes a PR
 
 ## Table of Contents:
 
+- [Table of Contents:](#table-of-contents)
 - [Getting Started](#getting-started)
-    + [Prerequisites](#prerequisites-)
-    + [Setting up the project](#setting-up-the-project-)
+    - [Prerequisites:](#prerequisites)
+    - [Setting up the project:](#setting-up-the-project)
 - [Usage](#usage)
-  * [The `g4f` Package](#the--g4f--package)
-  * [interference openai-proxy api](#interference-openai-proxy-api--use-with-openai-python-package-)
+  - [The `g4f` Package](#the-g4f-package)
+  - [interference openai-proxy api (use with openai python package)](#interference-openai-proxy-api-use-with-openai-python-package)
 - [Models](#models)
-  * [gpt-3.5 / gpt-4](#gpt-35---gpt-4)
-  * [Other Models](#other-models)
+  - [gpt-3.5 / gpt-4](#gpt-35--gpt-4)
+  - [Other Models](#other-models)
 - [Related gpt4free projects](#related-gpt4free-projects)
 - [Contribute](#contribute)
 - [ChatGPT clone](#chatgpt-clone)
-- [Copyright](#copyright-)
-- [Copyright Notice](#copyright-notice-)
+- [Copyright:](#copyright)
+- [Copyright Notice:](#copyright-notice)
 - [Star History](#star-history)
 
 ## Getting Started
