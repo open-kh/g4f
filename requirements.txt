@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 websocket-client
 Crypto
 requests
@@ -5,23 +6,14 @@ tls-client
 pypasser
 names
 colorama
+=======
+pycryptodome
+>>>>>>> 53a5be288a3026bd8bfda8f2fc296ce1d0950a34
 curl_cffi
 aiohttp
-flask
-flask_cors
-streamlit
-selenium
-fake-useragent
-twocaptcha
-streamlit-chat@https://github.com/AI-Yash/st-chat/archive/refs/pull/24/head.zip
-pydantic
-pymailtm
-Levenshtein
-retrying
-mailgw_temporary_email
-pycryptodome
-random-password-generator
-numpy>=1.22.2 # not directly required, pinned by Snyk to avoid a vulnerability
-tornado>=6.3.2 # not directly required, pinned by Snyk to avoid a vulnerability
-PyExecJS
+asyncio
+certifi
+Providers
 browser_cookie3
+websockets
+execjs

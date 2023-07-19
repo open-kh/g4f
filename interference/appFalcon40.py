@@ -5,6 +5,8 @@ import random
 
 import requests
 
+from curl_cffi import requests as reqs
+
 from g4f import Model, ModelUtils, ChatCompletion, Provider
 from flask import Flask, request, Response
 from flask_cors import CORS
@@ -53,10 +55,10 @@ def chat_completions():
     
     authkey = ['Co23kV7sPU45t', '7pZ9moAGkqR2i', 'RXsIxyJc6hGsA','4fDGzgKsEEW1q','tIUtcIhFwXZQv', 'DD3H9jy9gtf0L','iW6fkRHUGV8tm']
 
-    response = ChatCompletion.create(model=SetModel.name, provider=Provider.EasyChat,  stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
+    response = ChatCompletion.create(model=SetModel.name, provider=Provider.Liaobots,  stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
     if not streaming:
         while 'curl_cffi.requests.errors.RequestsError' in response:
-            response = ChatCompletion.create(model=SetModel.name,provider=Provider.EasyChat, stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
+            response = ChatCompletion.create(model=SetModel.name,provider=Provider.Liaobots, stream=streaming, messages=messages, auth=authkey[random.randint(0,len(authkey)-1)])
 
         completion_timestamp = int(time.time())
         completion_id = ''.join(random.choices(
@@ -112,6 +114,48 @@ def chat_completions():
 
 bearer = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFhZjI0ZTQ5LTFiMDUtNDBlMy1iMDU2LTFmM2FlYmViNzEyMCIsImlhdCI6MTY4OTQ5NjY3NCwiZXhwIjoxNjg5NzU1ODc0LCJhY3Rpb24iOiJhdXRoIiwiaXNzIjoidGhlYi5haSJ9.z5t72OxVK9xMxe8kC3huAqo6qPqkv92TG3SxqcGs0sg'
 
+@app.route("/v1/chat/completions", methods=['POST'])
+def chat_completion_v1():
+    random_req = ''.join(random.choices('0123456789', k=28))
+    
+    url = f"https://beta.theb.ai/api/conversation?org_id=496d24bf-2c9f-45a1-9d78-03213dca713b&req_rand=0.{random_req}"
+    header = {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 OPR/100.0.0.0',
+        'Authorization': f"Bearer {bearer}",
+    }
+    # completion_data = f"Sure, Here is the image:\n[![Image Generator]({token['data']['link']})]({token['data']['link']})\nDid you like it?"
+    response = reqs.post(url, headers=header, json=request.get_json(), content_callback=callback, impersonate='chrome110')
+
+    # return Response(response, content_type='application/json')
+    def callback():
+        for token in response:
+            completion_timestamp = int(time.time())
+            completion_id = ''.join(random.choices(
+                'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
+
+            completion_data = {
+                'id': f'chatcmpl-{completion_id}',
+                'object': 'chat.completion.chunk',
+                'created': completion_timestamp,
+                'model': 'busybox',
+                'choices': [
+                    {
+                        'delta': {
+                            'content': token
+                        },
+                        'index': 0,
+                        'finish_reason': None
+                    }
+                ]
+            }
+
+            yield 'data: %s\n\n' % json.dumps(completion_data, separators=(',' ':'))
+            time.sleep(0.1)
+
+
+    # return app.response_class(stream(), mimetype='text/event-stream')
+
 @app.route("/chat/image_generation", methods=['POST'])
 def image_generation():
     url = "https://beta.theb.ai/api/image?org_id=496d24bf-2c9f-45a1-9d78-03213dca713b"
@@ -138,7 +182,42 @@ def image_generation():
 
     return Response(completion_data, content_type='application/json')
 
+@app.route("/chat/image_generation_stream", methods=['POST'])
+def image_generation_stream():
+    url = "https://figma-ai-plugins.freepik.com/plugins/imagen/generator?/diffuse"
+    # Set the request headers
+    headers = {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json",
+        "Pragma": "no-cache",
+        "Sec-Fetch-Dest": "empty",
+        "X-Sveltekit-Action": "true"
+    }
 
+    # Set the request payload (if necessary)
+    payload = {
+        "query": request.json.get('query'),
+        "category": request.json.get('category',"none"),
+        "radio": request.json.get('radio',"1:1"),
+    }
+    print(payload)
+
+
+    # Make the API request
+    response = requests.post(url, headers=headers, json=payload)
+    # return response.json(), response.status_code, response.headers.items()
+
+    # Check the response status
+    if response.status_code == 200:
+        # Process the response as needed
+        content = response.json()
+        return Response(content, content_type='application/json')
+    else:
+        # print("Error occurred:", response.text)
+        return Response(response.text, content_type='application/json', status=500)
 
 if __name__ == '__main__':
     config = {

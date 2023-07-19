@@ -30,5 +30,13 @@ cookie.json
 *.pyc
 
 dist/
+<<<<<<< HEAD
 
 venv
+=======
+*.egg-info/
+*.egg
+*.egg-info
+build
+test.py
+>>>>>>> 53a5be288a3026bd8bfda8f2fc296ce1d0950a34
