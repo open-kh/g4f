@@ -6,7 +6,7 @@ docker image build -t ${GPT}:tag . #5000
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)
 
-COUNT=6
+COUNT=1
 PORT=1337
 for i in $(seq 1 $COUNT)
 do

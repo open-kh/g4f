@@ -43,7 +43,7 @@ def chat_completions():
     }
 
     # Getting the response
-    response = ChatCompletion.create(model=model.name, 
+    response = ChatCompletion.create(model='gpt-4'or model.name, 
                                         messages=messages, 
                                         stream=streaming, 
                                         provider=provider)
