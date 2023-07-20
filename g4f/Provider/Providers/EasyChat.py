@@ -39,7 +39,6 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
         'frequency_penalty': 0,
         'top_p': 1,
     }
-    print(data)
 
     response = requests.post('https://free.easychat.work/api/openai/v1/chat/completions',
         headers=headers, json=json_data)

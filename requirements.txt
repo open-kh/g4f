@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 websocket-client
 Crypto
 requests
@@ -6,9 +5,7 @@ tls-client
 pypasser
 names
 colorama
-=======
 pycryptodome
->>>>>>> 53a5be288a3026bd8bfda8f2fc296ce1d0950a34
 curl_cffi
 aiohttp
 asyncio
@@ -16,4 +13,4 @@ certifi
 Providers
 browser_cookie3
 websockets
-execjs
+pyexecjs
