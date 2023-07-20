@@ -5,6 +5,7 @@ tls-client
 pypasser
 names
 colorama
+quickjs
 pycryptodome
 curl_cffi
 aiohttp

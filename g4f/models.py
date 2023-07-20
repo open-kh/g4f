@@ -10,19 +10,18 @@ class Model:
     class gpt_35_turbo_16k:
         name: str = 'gpt-3.5-turbo-16k'
         base_provider: str = 'openai'
-        best_provider: Provider.Provider = Provider.EasyChat
+        best_provider: Provider.Provider = Provider.Bing
 
     class gpt_35_turbo:
         name: str = 'gpt-3.5-turbo'
         base_provider: str = 'openai'
-        best_provider: Provider.Provider = Provider.EasyChat
-        best_providers: list = [ Provider.Liaobots, Provider.Forefront, Provider.EasyChat]
+        best_provider: Provider.Provider = Provider.Bing
 
     class gpt_4:
         name: str = 'gpt-4'
         base_provider: str = 'openai'
-        best_provider: Provider.Provider = Provider.BingHuan
-        best_providers: list = [Provider.Bing, Provider.Lockchat]
+        best_provider: Provider.Provider = Provider.Bing
+        # best_providers: list = [Provider.Bing, Provider.Lockchat]
 
     class claude_instant_v1_100k:
         name: str = 'claude-instant-v1-100k'
@@ -159,20 +158,6 @@ class Model:
         base_provider: str = 'huggingface'
         best_provider: Provider.Provider = Provider.H2o
         
-    class gpt_35_turbo_16k:
-        name: str = 'gpt-3.5-turbo-16k'
-        base_provider: str = 'openai'
-        best_provider: Provider.Provider = Provider.EasyChat
-        
-    class gpt_35_turbo_0613:
-        name: str = 'gpt-3.5-turbo-0613'
-        base_provider: str = 'openai'
-        best_provider: Provider.Provider = Provider.EasyChat
-        
-    class gpt_35_turbo_16k_0613:
-        name: str = 'gpt-3.5-turbo-16k-0613'
-        base_provider: str = 'openai'
-        best_provider: Provider.Provider = Provider.EasyChat
         
     class gpt_4_32k:
         name: str = 'gpt-4-32k'
