@@ -6,7 +6,11 @@ import urllib.parse
 from curl_cffi import requests
 
 config = json.loads(sys.argv[1])
-prompt = config['messages'][-1]['content']
+# prompt = config['messages'][-1]['content']
+prompt = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k and Bing. Follow the user's instructions carefully. Respond using markdown."
+for message in config['messages']:
+    if message['role'] != "system":
+        prompt += '%s: %s\n' % (message['role'], message['content'])
 
 skill = 'expert' if config['model'] == 'gpt-4' else 'intermediate'
 
@@ -57,6 +61,7 @@ def output(chunk):
     except json.decoder.JSONDecodeError:
         pass
 
+count = 0
 while True:
     try:
         response = requests.post('https://www.phind.com/api/infer/answer',
@@ -66,4 +71,7 @@ while True:
     
     except Exception as e:
         print('an error occured, retrying... |', e, flush=True)
+        count += 1
+        if count > 10:
+            exit(1)
         continue
