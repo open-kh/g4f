@@ -8,6 +8,7 @@ from .Providers import (
     ChatgptAi,
     Aichat,
     Bard,
+    Phind,
     Vercel,
     Forefront,
     Lockchat,

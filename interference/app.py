@@ -49,7 +49,7 @@ def chat_completions():
         'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
     }
 
-    providers = Provider.Bing
+    providers = Provider.Phind
 
     authkey = ['Co23kV7sPU45t', '7pZ9moAGkqR2i', 'RXsIxyJc6hGsA','4fDGzgKsEEW1q','tIUtcIhFwXZQv', 'DD3H9jy9gtf0L','iW6fkRHUGV8tm']
 
