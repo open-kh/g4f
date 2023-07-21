@@ -29,13 +29,18 @@ def chat_completions():
     if barer != f"pk-{public_key}":
         return Response(response='Unauthorized', status=401)
 
-    model = Utils.convert[model]
+    model_base = Utils.convert[model]
     # prompt = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k. Follow the user's instructions carefully. Respond using markdown."
     # for message in config['messages']:
     #     prompt += '%s: %s\n' % (message['role'], message['content'])
 
     # Provider selection
-    provider=Provider.Phind
+
+    if model == 'gpt-4':
+        provider=Provider.Phind
+    else:
+        model_base = Utils.convert['falcon-40b']
+        provider=Provider.H2o
 
     # Streaming is not supported by these providers
     if provider in {Provider.Aws, Provider.Ora, Provider.Bard, Provider.Aichat}:
@@ -51,11 +56,14 @@ def chat_completions():
         'gpt-3.5-turbo-0613': 'gpt-3.5-turbo-0613',
         'falcon-7b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-7b-v3',
         'falcon-40b': 'h2oai/h2ogpt-gm-oasst1-en-2048-falcon-40b-v1',
-        'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b'
+        'llama-13b': 'h2oai/h2ogpt-gm-oasst1-en-2048-open-llama-13b',
+        # 'claude-instant-v1': 'anthropic:claude-instant-v1',
+        # 'claude-v1': 'anthropic:claude-v1',
+        # 'alpaca-7b': 'replicate:replicate/alpaca-7b',
     }
 
     # Getting the response
-    response = ChatCompletion.create(model='gpt-4'or model.name, 
+    response = ChatCompletion.create(model=model_base.name,
                                         messages=messages, 
                                         stream=streaming, 
                                         provider=provider)
@@ -70,7 +78,7 @@ def chat_completions():
                 'id': f'chatcmpl-{completion_id}',
                 'object': 'chat.completion.chunk',
                 'created': completion_timestamp,
-                'model': models[model.name],
+                'model': models[model_base.name],
                 'choices': [
                     {
                         'delta': {
