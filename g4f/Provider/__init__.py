@@ -3,6 +3,7 @@ from .Providers import (
     Phind, 
     You, 
     Bing, 
+    BigHuman,
     Openai, 
     Yqcloud, 
     Theb, 
