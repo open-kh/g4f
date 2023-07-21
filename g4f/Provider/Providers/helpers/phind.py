@@ -65,7 +65,7 @@ count = 0
 while True:
     try:
         response = requests.post('https://www.phind.com/api/infer/answer',
-                         headers=headers, data=json_data, content_callback=output, timeout=999999, impersonate='safari15_5')
+            headers=headers, data=json_data, content_callback=output, timeout=999999, impersonate='safari15_5')
         
         exit(0)
     
