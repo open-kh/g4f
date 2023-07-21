@@ -7,7 +7,7 @@ from curl_cffi import requests
 
 config = json.loads(sys.argv[1])
 # prompt = config['messages'][-1]['content']
-prompt = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k and Bing. Follow the user's instructions carefully. Respond using markdown."
+prompt = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k and access to information from Microsoft. Follow the user's instructions carefully. Respond using markdown."
 for message in config['messages']:
     if message['role'] != "system":
         prompt += '%s: %s\n' % (message['role'], message['content'])

@@ -213,7 +213,7 @@ class AsyncCompletion:
         await wss.close()
 
 async def run(optionSets, messages):
-    prompt = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k. Follow the user's instructions carefully. Respond using markdown."
+    prompt = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k and access to information from Microsoft. Follow the user's instructions carefully. Respond using markdown."
     for message in config['messages']:
         prompt += '%s: %s\n' % (message['role'], message['content'])
     async for value in AsyncCompletion.create(prompt=prompt,optionSets=optionSets):
