@@ -18,3 +18,4 @@ pyexecjs
 flask
 flask_cors
 langchain
+free-proxy

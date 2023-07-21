@@ -8,6 +8,8 @@ import ssl
 import certifi
 import aiohttp
 import asyncio
+from fp.fp import FreeProxy
+
 
 import requests
 from ...typing import sha256, Dict, get_type_hints
@@ -21,6 +23,7 @@ working = True
 ssl_context = ssl.create_default_context()
 ssl_context.load_verify_locations(certifi.where())
 
+proxy = FreeProxy(country_id=['US', 'BR']).get()
 
 class optionsSets:
     optionSet: dict = {
@@ -122,6 +125,7 @@ def _format(msg: dict) -> str:
 async def create_conversation():
     for _ in range(5):
         create = requests.get('https://www.bing.com/turing/conversation/create',
+                            #   proxies=[proxy],
                               headers={
                                   'authority': 'edgeservices.bing.com',
                                   'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -162,7 +166,10 @@ async def stream_generate(prompt: str, mode: optionsSets.optionSet = optionsSets
 
     conversationId, clientId, conversationSignature = await create_conversation()
 
-    wss = await session.ws_connect('wss://sydney.bing.com/sydney/ChatHub', ssl=ssl_context, autoping=False,
+    wss = await session.ws_connect('wss://sydney.bing.com/sydney/ChatHub',
+                                   ssl=ssl_context,
+                                   autoping=False,
+                                #    proxy=proxy,
                                    headers={
                                        'accept': 'application/json',
                                        'accept-language': 'en-US,en;q=0.9',
@@ -279,6 +286,7 @@ async def stream_generate(prompt: str, mode: optionsSets.optionSet = optionsSets
 
             elif response.get('type') == 2:
                 if response['item']['result'].get('error'):
+                    # print(wss, session)
                     if wss and not wss.closed:
                         await wss.close()
                     if session and not session.closed:

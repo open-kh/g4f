@@ -3,6 +3,7 @@ import sys
 import time
 import json
 import random
+import requests
 
 from g4f import Model, ChatCompletion, Provider, Utils
 from flask import Flask, request, Response
@@ -86,6 +87,34 @@ def chat_completions():
             # sys.stdout.flush()
 
     return app.response_class(stream(), mimetype='text/event-stream')
+
+bearer = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFhZjI0ZTQ5LTFiMDUtNDBlMy1iMDU2LTFmM2FlYmViNzEyMCIsImlhdCI6MTY4OTQ5NjY3NCwiZXhwIjoxNjg5NzU1ODc0LCJhY3Rpb24iOiJhdXRoIiwiaXNzIjoidGhlYi5haSJ9.z5t72OxVK9xMxe8kC3huAqo6qPqkv92TG3SxqcGs0sg'
+
+@app.route("/chat/image_generation", methods=['POST'])
+def image_generation():
+    url = "https://beta.theb.ai/api/image?org_id=496d24bf-2c9f-45a1-9d78-03213dca713b"
+    header = {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 OPR/100.0.0.0',
+        'Authorization': f"Bearer {bearer}",
+    }
+    text = request.json.get('text')
+    barer = request.headers.get('Authorization')
+    if barer is None:
+        barer = 'unknown'
+    else:
+        barer = barer.strip().split(" ")[1] if len(barer.strip().split(" ")) > 1 else 'unknown'
+
+    if barer != f"pk-{public_key}":
+        return Response(response='Unauthorized', status=401)
+    # return text
+    response = requests.post(url=url, headers=header, json={
+        "text": text
+    })
+    token = response.json()
+    completion_data = f"Sure, Here is the image:\n[![Image Generator]({token['data']['link']})]({token['data']['link']})\nDid you like it?"
+
+    return Response(completion_data, content_type='application/json')
 
 
 if __name__ == '__main__':
