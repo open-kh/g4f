@@ -11,11 +11,22 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+public_key = "pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWMLtscqsdiKmhI"
+
 @app.route("/chat/completions", methods=['POST'])
 def chat_completions():
     streaming = request.json.get('stream', False)
     model = request.json.get('model', 'gpt-3.5-turbo')
     messages = request.json.get('messages')
+    barer = request.headers.get('Authorization')
+    
+    if barer is None:
+        barer = 'unknown'
+    else:
+        barer = barer.strip().split(" ")[1] if len(barer.strip().split(" ")) > 1 else 'unknown'
+
+    if barer != f"pk-{public_key}":
+        return Response(response='Unauthorized', status=401)
 
     model = Utils.convert[model]
     # prompt = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k. Follow the user's instructions carefully. Respond using markdown."
