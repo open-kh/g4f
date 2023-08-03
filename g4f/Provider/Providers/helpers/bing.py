@@ -74,6 +74,33 @@ conversationstyles = {
 def format(msg: dict) -> str:
     return json.dumps(msg) + '\x1e'
 
+def getCookies(url):
+    browsers = [
+        # browser_cookie3.chrome,
+        # browser_cookie3.chromium,
+        # browser_cookie3.opera,
+        # browser_cookie3.opera_gx,
+        # browser_cookie3.brave,
+        browser_cookie3.edge,
+        # browser_cookie3.vivaldi,
+        # browser_cookie3.firefox,
+        # browser_cookie3.librewolf,
+        # browser_cookie3.safari,
+    ]
+    for browser_fn in browsers:
+        # if browser isn't installed browser_cookie3 raises exception
+        # hence we need to ignore it and try to find the right one
+        try:
+            cookies = []
+            cj = browser_fn(domain_name=url)
+            for cookie in cj:
+                cookies.append(cookie.__dict__)
+            return cookies
+        except:
+            continue
+cookies=getCookies('.bing.com')
+print(cookies)
+
 def get_token():
     return
     
