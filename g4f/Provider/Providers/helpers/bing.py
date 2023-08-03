@@ -98,8 +98,8 @@ def getCookies(url):
             return cookies
         except:
             continue
-cookies=getCookies('.bing.com')
-print(cookies)
+# cookies=getCookies('.bing.com')
+# print(cookies)
 
 def get_token():
     return

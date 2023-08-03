@@ -37,7 +37,7 @@ def chat_completions():
 
     # Provider selection
 
-    if model == 'gpt-4':
+    if model == 'gpt-4' or 'gpt-3.5-turbo':
         provider=Provider.Phind
     else:
         model_base = Utils.convert['falcon-40b']

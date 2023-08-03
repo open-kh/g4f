@@ -362,8 +362,6 @@ def getCookies(url):
             return cookies
         except:
             continue
-cookies=getCookies('.bing.com')
-print(cookies)
 
 def _create_completion(model: str, messages: list, stream: bool, **kwargs):
     if len(messages) < 2:
