@@ -7,12 +7,14 @@ from curl_cffi import requests
 
 config = json.loads(sys.argv[1])
 # prompt = config['messages'][-1]['content']
-prompt = "system: \nYou are Open Brain, a large language model trained by OpenAI using gpt-4-32k and access to information from Microsoft. Follow the user's instructions carefully. Respond using markdown.\n"
+# prompt = "system: \nYou are Open Brain, a large language model trained by OpenAI using gpt-4-32k and access to information from Microsoft. Follow the user's instructions carefully. Respond using markdown.\n"
+prompt = "system: \nYou are Open Brain\n"
 for message in config['messages']:
     if message['role'] != "system":
         prompt += '%s: %s\n' % (message['role'], message['content'])
 
-skill = 'expert' if config['model'] == 'gpt-4' else 'intermediate'
+# skill = 'expert' if config['model'] == 'gpt-4' else 'intermediate'
+skill = 'expert'
 
 json_data = json.dumps({
     'question': prompt,
