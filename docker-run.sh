@@ -11,9 +11,9 @@ PORT=1337
 for i in $(seq 1 $COUNT)
 do
     docker run -d -p ${PORT}:1337 ${GPT}:tag
+    docker run -d -p ${PORT}:1333 ${GPT}img:tag
     PORT=$((PORT+1))
 done
-docker run -d -p 1333:1333 ${GPT}img:tag
 # docker run -d -p 1342:1333 ${GPT}:tag
 
 # docker ps -al
