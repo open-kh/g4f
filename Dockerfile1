@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir -r /requirements.txt
 
 COPY . .
 
-CMD [ "python", "-m" , "interference.app"]
+CMD [ "python", "-m" , "interference.appImg"]
 # CMD [ "python", "-m" , "interference.appImg"]
 # CMD [ "python", "-m" , "interference.appFalcon40"]
 # CMD [ "python", "-m" , "interference.bing"]
