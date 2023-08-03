@@ -143,24 +143,20 @@ def image_generation():
 
     data = response.json()
     token = ""
-    images = []
     for i, image in enumerate(data["artifacts"]):
         img64 = image["base64"]
         imgID = image["seed"]
         imgName = f"txt2img_{imgID}.png"
         with open(f"./out/{imgName}", "wb") as f:
             f.write(base64.b64decode(img64))
-            images.append(imgName)
             urlImg = f"https://{request.host}/images/{imgName}"
             token+=f"[![Image Generator]({urlImg})]({urlImg})\n"
 
     completion_data = f"Sure, Here is the image:\n{token}Did you like it?"
 
-    # print(completion_data)
-
     return Response(completion_data, content_type='application/json')
 
-@app.route('/images/<path:path>')
+@app.route('/images/<path:path>',methods=['GET'])
 def send_static_file(path):
     return send_file(f"../out/{path}")
 
