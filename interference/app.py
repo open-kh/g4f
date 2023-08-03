@@ -151,7 +151,7 @@ def image_generation():
         with open(f"./out/{imgName}", "wb") as f:
             f.write(base64.b64decode(img64))
             images.append(imgName)
-            urlImg = f"{request.host}/images/{imgName}"
+            urlImg = f"https://{request.host}/images/{imgName}"
             token+=f"[![Image Generator]({urlImg})]({urlImg})\n"
 
     completion_data = f"Sure, Here is the image:\n{token}Did you like it?"
