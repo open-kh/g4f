@@ -39,4 +39,10 @@ venv
 *.egg-info
 build
 test.py
+<<<<<<< HEAD
 >>>>>>> 53a5be288a3026bd8bfda8f2fc296ce1d0950a34
+=======
+
+# Emacs crap
+*~
+>>>>>>> a8f24951427bbc6115649e039c059707327f8b57

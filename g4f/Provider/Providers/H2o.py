@@ -27,7 +27,7 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
     else:
         print(session)
 
-    conversation = "You are Open Brain, a large language model trained by OpenAI using gpt-4-32k. Follow the user's instructions carefully. Respond using markdown."
+    conversation = "You are Open Brain, a large language model trained by Meta. Follow the user's instructions carefully. Respond using markdown."
     for message in messages:
         conversation += '%s: %s\n' % (message['role'], message['content'])
     
@@ -95,6 +95,7 @@ def _create_completion(model: str, messages: list, stream: bool, **kwargs):
     response = session.post(f"https://gpt-gm.h2o.ai/conversation/{conversation_id.json()['conversationId']}", headers=headers, json=data)
     generated_text = response.text.replace("\n", "").split("data:")
     generated_text = json.loads(generated_text[-1])
+    # print(generated_text)
     
     return generated_text["generated_text"]
 

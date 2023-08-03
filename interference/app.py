@@ -3,10 +3,11 @@ import sys
 import time
 import json
 import random
+import base64
 import requests
 
 from g4f import Model, ChatCompletion, Provider, Utils
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_file
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -96,15 +97,14 @@ def chat_completions():
 
     return app.response_class(stream(), mimetype='text/event-stream')
 
-bearer = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFhZjI0ZTQ5LTFiMDUtNDBlMy1iMDU2LTFmM2FlYmViNzEyMCIsImlhdCI6MTY4OTQ5NjY3NCwiZXhwIjoxNjg5NzU1ODc0LCJhY3Rpb24iOiJhdXRoIiwiaXNzIjoidGhlYi5haSJ9.z5t72OxVK9xMxe8kC3huAqo6qPqkv92TG3SxqcGs0sg'
-
+API_KEY="sk-WTeLd6cpQJzWBwqrwDDWkZGwiyg4IQ0dUpReZc8v59Sd3N9l"
 @app.route("/chat/image_generation", methods=['POST'])
 def image_generation():
-    url = "https://beta.theb.ai/api/image?org_id=496d24bf-2c9f-45a1-9d78-03213dca713b"
+    url = "https://api.stability.ai/v1/generation/stable-diffusion-xl-beta-v2-2-2/text-to-image"
     header = {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 OPR/100.0.0.0',
-        'Authorization': f"Bearer {bearer}",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {API_KEY}",
     }
     text = request.json.get('text')
     barer = request.headers.get('Authorization')
@@ -116,14 +116,53 @@ def image_generation():
     if barer != f"pk-{public_key}":
         return Response(response='Unauthorized', status=401)
     # return text
-    response = requests.post(url=url, headers=header, json={
-        "text": text
-    })
-    token = response.json()
-    completion_data = f"Sure, Here is the image:\n[![Image Generator]({token['data']['link']})]({token['data']['link']})\nDid you like it?"
+
+    body = {
+        "width": 512,
+        "height": 512,
+        "steps": 50,
+        "seed": 0,
+        "cfg_scale": 7,
+        "samples": 1,
+        "style_preset": "enhance",
+        "text_prompts": [
+            {
+            "text": f"{text}",
+            "weight": 1
+            },
+            {
+            "text": "reduce noise",
+            "weight": -1
+            }
+        ],
+    }
+    response = requests.post(url,headers=header,json=body)
+
+    if response.status_code != 200:
+        raise Exception("Non-200 response: " + str(response.text))
+
+    data = response.json()
+    token = ""
+    images = []
+    for i, image in enumerate(data["artifacts"]):
+        img64 = image["base64"]
+        imgID = image["seed"]
+        imgName = f"txt2img_{imgID}.png"
+        with open(f"./out/{imgName}", "wb") as f:
+            f.write(base64.b64decode(img64))
+            images.append(imgName)
+            urlImg = f"{request.host}/images/{imgName}"
+            token+=f"[![Image Generator]({urlImg})]({urlImg})\n"
+
+    completion_data = f"Sure, Here is the image:\n{token}Did you like it?"
+
+    # print(completion_data)
 
     return Response(completion_data, content_type='application/json')
 
+@app.route('/images/<path:path>')
+def send_static_file(path):
+    return send_file(f"../out/{path}")
 
 if __name__ == '__main__':
     config = {
