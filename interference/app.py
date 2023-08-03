@@ -158,7 +158,7 @@ def image_generation():
 
 @app.route('/images/<path:path>',methods=['GET'])
 def send_static_file(path):
-    return send_file(f"../out/{path}")
+    return send_file(f"/out/{path}")
 
 if __name__ == '__main__':
     config = {
