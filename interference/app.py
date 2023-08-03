@@ -97,68 +97,68 @@ def chat_completions():
 
     return app.response_class(stream(), mimetype='text/event-stream')
 
-API_KEY="sk-WTeLd6cpQJzWBwqrwDDWkZGwiyg4IQ0dUpReZc8v59Sd3N9l"
-@app.route("/chat/image_generation", methods=['POST'])
-def image_generation():
-    url = "https://api.stability.ai/v1/generation/stable-diffusion-xl-beta-v2-2-2/text-to-image"
-    header = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {API_KEY}",
-    }
-    text = request.json.get('text')
-    barer = request.headers.get('Authorization')
-    if barer is None:
-        barer = 'unknown'
-    else:
-        barer = barer.strip().split(" ")[1] if len(barer.strip().split(" ")) > 1 else 'unknown'
+# API_KEY="sk-WTeLd6cpQJzWBwqrwDDWkZGwiyg4IQ0dUpReZc8v59Sd3N9l"
+# @app.route("/chat/image_generation", methods=['POST'])
+# def image_generation():
+#     url = "https://api.stability.ai/v1/generation/stable-diffusion-xl-beta-v2-2-2/text-to-image"
+#     header = {
+#         "Accept": "application/json",
+#         "Content-Type": "application/json",
+#         "Authorization": f"Bearer {API_KEY}",
+#     }
+#     text = request.json.get('text')
+#     barer = request.headers.get('Authorization')
+#     if barer is None:
+#         barer = 'unknown'
+#     else:
+#         barer = barer.strip().split(" ")[1] if len(barer.strip().split(" ")) > 1 else 'unknown'
 
-    if barer != f"pk-{public_key}":
-        return Response(response='Unauthorized', status=401)
-    # return text
+#     if barer != f"pk-{public_key}":
+#         return Response(response='Unauthorized', status=401)
+#     # return text
 
-    body = {
-        "width": 512,
-        "height": 512,
-        "steps": 50,
-        "seed": 0,
-        "cfg_scale": 7,
-        "samples": 1,
-        "style_preset": "enhance",
-        "text_prompts": [
-            {
-            "text": f"{text}",
-            "weight": 1
-            },
-            {
-            "text": "reduce noise",
-            "weight": -1
-            }
-        ],
-    }
-    response = requests.post(url,headers=header,json=body)
+#     body = {
+#         "width": 512,
+#         "height": 512,
+#         "steps": 50,
+#         "seed": 0,
+#         "cfg_scale": 7,
+#         "samples": 1,
+#         "style_preset": "enhance",
+#         "text_prompts": [
+#             {
+#             "text": f"{text}",
+#             "weight": 1
+#             },
+#             {
+#             "text": "reduce noise",
+#             "weight": -1
+#             }
+#         ],
+#     }
+#     response = requests.post(url,headers=header,json=body)
 
-    if response.status_code != 200:
-        raise Exception("Non-200 response: " + str(response.text))
+#     if response.status_code != 200:
+#         raise Exception("Non-200 response: " + str(response.text))
 
-    data = response.json()
-    token = ""
-    for i, image in enumerate(data["artifacts"]):
-        img64 = image["base64"]
-        imgID = image["seed"]
-        imgName = f"txt2img_{imgID}.png"
-        with open(f"./out/{imgName}", "wb") as f:
-            f.write(base64.b64decode(img64))
-            urlImg = f"https://{request.host}/images/{imgName}"
-            token+=f"[![Image Generator]({urlImg})]({urlImg})\n"
+#     data = response.json()
+#     token = ""
+#     for i, image in enumerate(data["artifacts"]):
+#         img64 = image["base64"]
+#         imgID = image["seed"]
+#         imgName = f"txt2img_{imgID}.png"
+#         with open(f"./out/{imgName}", "wb") as f:
+#             f.write(base64.b64decode(img64))
+#             urlImg = f"https://{request.host}/images/{imgName}"
+#             token+=f"[![Image Generator]({urlImg})]({urlImg})\n"
 
-    completion_data = f"Sure, Here is the image:\n{token}Did you like it?"
+#     completion_data = f"Sure, Here is the image:\n{token}Did you like it?"
 
-    return Response(completion_data, content_type='application/json')
+#     return Response(completion_data, content_type='application/json')
 
-@app.route('/images/<path:path>',methods=['GET'])
-def send_static_file(path):
-    return send_file(f"/out/{path}")
+# @app.route('/images/<path:path>',methods=['GET'])
+# def send_static_file(path):
+#     return send_file(f"/out/{path}")
 
 if __name__ == '__main__':
     config = {

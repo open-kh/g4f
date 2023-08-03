@@ -11,7 +11,8 @@ RUN pip install --no-cache-dir -r /requirements.txt
 
 COPY . .
 
-CMD [ "python", "-m" , "interference.app"]
+CMD [ "python", "-m" , "interference.app && interference.appImg"]
+# CMD [ "python", "-m" , "interference.appImg"]
 # CMD [ "python", "-m" , "interference.appFalcon40"]
 # CMD [ "python", "-m" , "interference.bing"]
 # CMD [ "python", "-m" , "flask", "--app", "interference.app", "run", "--host=0.0.0.0", "--port=5000"]
