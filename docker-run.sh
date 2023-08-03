@@ -8,9 +8,9 @@ docker rm $(docker ps -a -q)
 
 COUNT=6
 PORT=1337
-for i in $(seq 1 $COUNT)
-do
-    docker run -d -p ${PORT}:1337 ${GPT}:tag
-    PORT=$((PORT+1))
-done
+docker run -d -p ${PORT}:1337 ${GPT}:tag
+# for i in $(seq 1 $COUNT)
+# do
+#     PORT=$((PORT+1))
+# done
 # docker ps -al
