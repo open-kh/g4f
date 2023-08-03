@@ -14,11 +14,15 @@ else:
 print(provider.params) # supported args
 
 # Getting the response
-response = g4f.ChatCompletion.create(model='gpt-4', 
-									messages=[{"role": "user", 
-											"content": "Write a poem about a tree."}], 
-									stream=stream, 
-									provider=provider)
+response = g4f.ChatCompletion.create(
+	model='gpt-4',
+	messages=[
+		{"role": "system","content": "You are Open Brain"},
+		{"role": "user","content": "Hello, Who are you?"}
+	],
+	stream=stream,
+	provider=provider
+)
 
 # Printing the response          
 if stream:          
