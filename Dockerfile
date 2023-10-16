@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 # Copy the project's requirements file into the container.
-# COPY requirements.txt ./
+COPY requirements.txt .
 
 # Upgrade pip for the latest features and install the project's Python dependencies.
 RUN pip install --upgrade pip && pip install -r requirements.txt
