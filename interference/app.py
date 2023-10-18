@@ -8,14 +8,16 @@ from typing       import Any
 from flask        import Flask, request
 from flask_cors   import CORS
 from transformers import AutoTokenizer
-from g4f          import ChatCompletion
+from g4f          import ChatCompletion, models
 from g4f.Provider import (
     Bard,
+    Phind,
     Bing,
     HuggingChat,
     OpenAssistant,
     OpenaiChat,
 )
+from  testing.log_time import log_time_yield
 
 app = Flask(__name__)
 CORS(app)
@@ -27,8 +29,30 @@ def chat_completions():
     stream   = request.get_json().get('stream', False)
     messages = request.get_json().get('messages')
 
-    response = ChatCompletion.create(model = model, provider=Bing,
-                                     stream = stream, messages = messages)
+    check = False
+    if model == 'openai':
+        model = 'gpt-4'
+        provider = Bing
+        check = True
+    else:
+        provider = HuggingChat
+        response = ChatCompletion.create(
+            model = models.default,
+            provider=provider,
+            stream = stream, 
+            messages = messages, 
+            auth=True,
+        )
+
+
+    if check:
+        response = ChatCompletion.create(
+            model = model,
+            provider=provider,
+            stream = stream, 
+            messages = messages, 
+            auth=True,
+        )
 
     completion_id = ''.join(random.choices(string.ascii_letters + string.digits, k=28))
     completion_timestamp = int(time.time())

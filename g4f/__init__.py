@@ -55,7 +55,6 @@ class ChatCompletion:
         auth     : Union[str, None]                = None,
         **kwargs
     ) -> Union[CreateResult, str]:
-
         model, provider = get_model_and_provider(model, provider, stream)
 
         if provider.needs_auth and not auth:

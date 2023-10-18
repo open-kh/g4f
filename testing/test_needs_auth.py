@@ -40,9 +40,13 @@ print("Bing: ", end="")
 for response in log_time_yield(
     g4f.ChatCompletion.create,
     model=g4f.models.default,
-    messages=[{"role": "user", "content": _instruct}],
-    provider=g4f.Provider.Bing,
-    #cookies=g4f.get_cookies(".huggingface.co"),
+    messages=[{
+            "role": "system",
+            "content": "You are Open Brain"
+        },{"role": "user", "content": _instruct}],
+    # provider=g4f.Provider.Bing,
+    provider=g4f.Provider.HuggingChat,
+    # cookies=g4f.get_cookies(".huggingface.co"),
     stream=True,
     auth=True
 ):
@@ -51,46 +55,46 @@ print()
 print()
 
 
-async def run_async():
-    responses = [
-        log_time_async(
-            provider.create_async, 
-            model=None,
-            messages=[{"role": "user", "content": _instruct}],
-        )
-        for provider in _providers
-    ]
-    responses = await asyncio.gather(*responses)
-    for idx, provider in enumerate(_providers):
-        print(f"{provider.__name__}:", responses[idx])
-print("Async Total:", asyncio.run(log_time_async(run_async)))
-print()
+# async def run_async():
+#     responses = [
+#         log_time_async(
+#             provider.create_async, 
+#             model=None,
+#             messages=[{"role": "user", "content": _instruct}],
+#         )
+#         for provider in _providers
+#     ]
+#     responses = await asyncio.gather(*responses)
+#     for idx, provider in enumerate(_providers):
+#         print(f"{provider.__name__}:", responses[idx])
+# print("Async Total:", asyncio.run(log_time_async(run_async)))
+# print()
 
 
-def run_stream():
-    for provider in _providers:
-        print(f"{provider.__name__}: ", end="")
-        for response in log_time_yield(
-            provider.create_completion,
-            model=None,
-            messages=[{"role": "user", "content": _instruct}],
-        ):
-            print(response, end="", flush=True)
-        print()
-print("Stream Total:", log_time(run_stream))
-print()
+# def run_stream():
+#     for provider in _providers:
+#         print(f"{provider.__name__}: ", end="")
+#         for response in log_time_yield(
+#             provider.create_completion,
+#             model=None,
+#             messages=[{"role": "user", "content": _instruct}],
+#         ):
+#             print(response, end="", flush=True)
+#         print()
+# print("Stream Total:", log_time(run_stream))
+# print()
 
 
-def create_no_stream():
-    for provider in _providers:
-        print(f"{provider.__name__}:", end=" ")
-        for response in log_time_yield(
-            provider.create_completion,
-            model=None,
-            messages=[{"role": "user", "content": _instruct}],
-            stream=False
-        ):
-            print(response, end="")
-        print()
-print("No Stream Total:", log_time(create_no_stream))
-print()
+# def create_no_stream():
+#     for provider in _providers:
+#         print(f"{provider.__name__}:", end=" ")
+#         for response in log_time_yield(
+#             provider.create_completion,
+#             model=None,
+#             messages=[{"role": "user", "content": _instruct}],
+#             stream=False
+#         ):
+#             print(response, end="")
+#         print()
+# print("No Stream Total:", log_time(create_no_stream))
+# print()

@@ -31,7 +31,7 @@ class OpenaiChat(AsyncGeneratorProvider):
             "Accept": "text/event-stream",
             "Authorization": f"Bearer {access_token}",
         }
-        async with StreamSession(proxies=proxies, headers=headers, impersonate="chrome107") as session:
+        async with StreamSession(proxies=proxies, headers=headers) as session:
             messages = [
                 {
                     "id": str(uuid.uuid4()),
@@ -47,6 +47,7 @@ class OpenaiChat(AsyncGeneratorProvider):
                 "model": "text-davinci-002-render-sha",
                 "history_and_training_disabled": True,
             }
+            # print(data)
             async with session.post(f"{cls.url}/backend-api/conversation", json=data) as response:
                 response.raise_for_status()
                 last_message = ""
