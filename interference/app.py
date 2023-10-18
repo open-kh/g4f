@@ -34,15 +34,20 @@ def chat_completions():
         model = 'gpt-4'
         provider = Bing
         check = True
+    elif model == 'bard':
+        provider = Bard
+        stream = False
     else:
         provider = HuggingChat
-        response = ChatCompletion.create(
-            model = models.default,
-            provider=provider,
-            stream = stream, 
-            messages = messages, 
-            auth=True,
-        )
+        
+    response = ChatCompletion.create(
+        model = models.default,
+        provider=provider,
+        stream = stream, 
+        messages = messages, 
+        auth=True,
+    )
+    print(model)
 
 
     if check:
@@ -58,6 +63,8 @@ def chat_completions():
     completion_timestamp = int(time.time())
 
     if not stream:
+        if model == 'bard':
+            return response
         return {
             'id': f'chatcmpl-{completion_id}',
             'object': 'chat.completion',

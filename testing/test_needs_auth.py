@@ -44,10 +44,10 @@ for response in log_time_yield(
             "role": "system",
             "content": "You are Open Brain"
         },{"role": "user", "content": _instruct}],
-    # provider=g4f.Provider.Bing,
-    provider=g4f.Provider.HuggingChat,
+    provider=g4f.Provider.Bard,
+    # provider=g4f.Provider.HuggingChat,
     # cookies=g4f.get_cookies(".huggingface.co"),
-    stream=True,
+    # stream=True,
     auth=True
 ):
     print(response, end="", flush=True)

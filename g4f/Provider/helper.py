@@ -55,7 +55,7 @@ def format_prompt(messages: list[dict[str, str]], add_special_tokens=False):
         formatted = "\n".join(
             ["%s: %s" % ((message["role"]).capitalize(), message["content"]) for message in messages]
         )
-        return f"{formatted}\nAssistant:"
+        return f"Instructions:\n{formatted}\nAssistant:"
     else:
         return messages[0]["content"]
     
