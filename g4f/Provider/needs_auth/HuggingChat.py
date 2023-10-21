@@ -12,8 +12,8 @@ class HuggingChat(AsyncGeneratorProvider):
     url = "https://huggingface.co/chat"
     needs_auth = True
     working = True
-    model = "tiiuae/falcon-180B-chat"
-    # model = "meta-llama/Llama-2-70b-chat-hf"
+    # model = "tiiuae/falcon-180B-chat"
+    model = "meta-llama/Llama-2-70b-chat-hf"
 
     @classmethod
     async def create_async_generator(
@@ -40,6 +40,7 @@ class HuggingChat(AsyncGeneratorProvider):
         ) as session:
             async with session.post(f"{cls.url}/conversation", json={"model": model}, proxy=proxy) as response:
                 conversation_id = (await response.json())["conversationId"]
+            # print(conversation_id)
 
             send = {
                 "id": str(uuid.uuid4()),

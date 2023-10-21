@@ -48,6 +48,7 @@ for response in log_time_yield(
     provider=g4f.Provider.HuggingChat,
     # cookies=g4f.get_cookies(".huggingface.co"),
     stream=True,
+    # proxy="127.0.0.1",
     auth=True
 ):
     print(response, end="", flush=True)
