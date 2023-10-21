@@ -5,7 +5,7 @@ import string
 import requests
 
 from typing       import Any
-from flask        import Flask, request
+from flask        import Flask, request, Response
 from flask_cors   import CORS
 from transformers import AutoTokenizer
 from g4f          import ChatCompletion, models
@@ -22,12 +22,23 @@ from  testing.log_time import log_time_yield
 app = Flask(__name__)
 CORS(app)
 
+public_key = "pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWML tscqsdiKmhI"
+
 @app.route('/chat/completions', methods=['POST'])
 def chat_completions():
     # model    = request.get_json().get('model', 'gpt-3.5-turbo')
     model    = request.get_json().get('model', 'gpt-4')
     stream   = request.get_json().get('stream', False)
     messages = request.get_json().get('messages')
+
+    barer = request.headers.get('Authorization')
+    if barer is None:
+        barer = 'unknown'
+    else:
+        barer = barer.strip().split(" ")[1] if len(barer.strip().split(" ")) > 1 else 'unknown'
+
+    if barer != f"pk-{public_key}":
+        return Response(response='Unauthorized', status=401)
 
     check = False
     if model == 'openai':
@@ -40,6 +51,8 @@ def chat_completions():
     else:
         provider = HuggingChat
         
+    print(model)
+
     response = ChatCompletion.create(
         model = models.default,
         provider=provider,
@@ -47,7 +60,6 @@ def chat_completions():
         messages = messages, 
         auth=True,
     )
-    print(model)
 
 
     if check:
