@@ -20,7 +20,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 
 # Upgrade pip for the latest features and install the project's Python dependencies.
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy the entire project into the container.
 # This may include all code, assets, and configuration files required to run the application.
