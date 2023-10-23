@@ -48,11 +48,10 @@ for response in log_time_yield(
             "content": "You are Open Brain"
         },{"role": "user", "content": _instruct}],
     # provider=g4f.Provider.Bard,
-    provider=g4f.Provider.OpenaiChat,
-    access_token=gpt_access_token,
-    # provider=g4f.Provider.HuggingChat,
+    provider=g4f.Provider.Replicate,
     # cookies=g4f.get_cookies(".huggingface.co"),
     stream=True,
+    # proxy="127.0.0.1",
     auth=True
 ):
     print(response, end="", flush=True)
