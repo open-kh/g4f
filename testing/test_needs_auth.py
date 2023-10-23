@@ -14,6 +14,7 @@ _providers = [
     g4f.Provider.HuggingChat,
     g4f.Provider.OpenAssistant,
     g4f.Provider.Bing,
+    g4f.Provider.Ails,
     g4f.Provider.Bard
 ]
 
@@ -36,7 +37,9 @@ Bing: Hello! How can I help you today? 3.28 secs
 No Stream Total: 10.14 secs
 """
 
-print("Bing: ", end="")
+gpt_access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJwaGVhcnVtLm5vcC5raEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0sImh0dHBzOi8vYXBpLm9wZW5haS5jb20vYXV0aCI6eyJ1c2VyX2lkIjoidXNlci01THExYnRhRHp2N2w4Y0xJYnJDUXV5T04ifSwiaXNzIjoiaHR0cHM6Ly9hdXRoMC5vcGVuYWkuY29tLyIsInN1YiI6ImF1dGgwfDY1MDcyYWFmNjEwNmZkN2E3MmU5MDk0MCIsImF1ZCI6WyJodHRwczovL2FwaS5vcGVuYWkuY29tL3YxIiwiaHR0cHM6Ly9vcGVu…VueXl3aDVFNHlPbzZJdEciLCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwcm9maWxlIG1vZGVsLnJlYWQgbW9kZWwucmVxdWVzdCBvcmdhbml6YXRpb24ucmVhZCBvcmdhbml6YXRpb24ud3JpdGUgb2ZmbGluZV9hY2Nlc3MifQ.tINb6O2Ny9B4_6QrC0f0orfXhSQnlejrapyROHjwQ4AvWt3V0m3XQRVNJIeMfcsT61mQj8jkwdiIuBqqvBG6LJ7lgBVzf6ZSsyvzSxPDiGGUOHeH2LhkouT9bjfEsURBZyf7BOLadn12eVPechzp3e4-wj07Gt3s8ZH6bnzUHi5yGIvEmv9fOr6ZnpJ3GJfrxMf-4EaSgSmc8xOzRChb6fRgfXHq551niLlAtUrlgK0rMOr-kyOZLO2aSCToFGSpD8Eq__bsMgFkaiAfmCHtSHZpcJHSDZynS0CUw_I9cduOMKkU-Sx8u8w7p8ORShGrtdu23kBD5nIV_SuoxrRuJw"
+
+# print("Bing: ", end="")
 for response in log_time_yield(
     g4f.ChatCompletion.create,
     model=g4f.models.default,
@@ -45,7 +48,9 @@ for response in log_time_yield(
             "content": "You are Open Brain"
         },{"role": "user", "content": _instruct}],
     # provider=g4f.Provider.Bard,
-    provider=g4f.Provider.HuggingChat,
+    provider=g4f.Provider.OpenaiChat,
+    access_token=gpt_access_token,
+    # provider=g4f.Provider.HuggingChat,
     # cookies=g4f.get_cookies(".huggingface.co"),
     stream=True,
     auth=True

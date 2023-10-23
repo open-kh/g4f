@@ -25,6 +25,7 @@ class OpenaiChat(AsyncGeneratorProvider):
         **kwargs: dict
     ) -> AsyncGenerator:
         proxies = {"https": proxy}
+        print(access_token)
         if not access_token:
             access_token = await cls.get_access_token(cookies, proxies)
         headers = {
