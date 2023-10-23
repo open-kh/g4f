@@ -9,6 +9,7 @@
 
 # Ignore local python virtual environment
 venv/
+out
 gpt
 .gpt
 .bin

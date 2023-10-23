@@ -24,7 +24,7 @@ from .Vitalentum    import Vitalentum
 from .Ylokh         import Ylokh
 from .You           import You
 from .Yqcloud       import Yqcloud
-from .Replicate     import Replicate
+from .StabilityAI   import StabilityAI
 
 from .base_provider  import BaseProvider, AsyncProvider, AsyncGeneratorProvider
 from .retry_provider import RetryProvider
@@ -32,7 +32,7 @@ from .deprecated     import *
 from .needs_auth     import *
 
 __all__ = [
-    'Replicate',
+    'StabilityAI',
     'BaseProvider',
     'AsyncProvider',
     'AsyncGeneratorProvider',
