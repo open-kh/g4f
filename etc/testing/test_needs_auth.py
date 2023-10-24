@@ -47,8 +47,8 @@ for response in log_time_yield(
             "role": "system",
             "content": "You are Open Brain"
         },{"role": "user", "content": _instruct}],
-    provider=g4f.Provider.Bard,
-    # provider=g4f.Provider.Replicate,
+    # provider=g4f.Provider.Vercel,
+    provider=g4f.Provider.Theb,
     # cookies=g4f.get_cookies(".huggingface.co"),
     stream=True,
     auth=True

@@ -37,7 +37,7 @@ def image_generate_temp():
     for img in out['images']:
         imgID = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
         imgName = f"txt2img_{imgID}.png"
-        urlImg = f"http://{request.host}/images/{imgName}"
+        urlImg = f"https://{request.host}/images/{imgName}"
         urlretrieve(img, f"./out/{imgName}")
         # size = "{height=270px width=270px}" 
         # if len(out['images'])>=2 else ""
