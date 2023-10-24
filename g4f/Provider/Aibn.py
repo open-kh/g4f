@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 import hashlib
 
-from ..typing import AsyncGenerator
+from ..typing import AsyncResult, Messages
 from ..requests import StreamSession
 from .base_provider import AsyncGeneratorProvider
 
@@ -11,16 +11,22 @@ from .base_provider import AsyncGeneratorProvider
 class Aibn(AsyncGeneratorProvider):
     url                   = "https://aibn.cc"
     supports_gpt_35_turbo = True
-    working               = True
+    working               = False
 
     @classmethod
     async def create_async_generator(
         cls,
         model: str,
-        messages: list[dict[str, str]],
+        messages: Messages,
+        proxy: str = None,
+        timeout: int = 120,
         **kwargs
-    ) -> AsyncGenerator:
-        async with StreamSession(impersonate="chrome107") as session:
+    ) -> AsyncResult:
+        async with StreamSession(
+            impersonate="chrome107",
+            proxies={"https": proxy},
+            timeout=timeout
+        ) as session:
             timestamp = int(time.time())
             data = {
                 "messages": messages,

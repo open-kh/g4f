@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import json
 import random
-
 import requests
 
-from ...typing import Any, CreateResult
+from ...typing import Any, CreateResult, Messages
 from ..base_provider import BaseProvider
+from ..helper import format_prompt
 
 
 class Theb(BaseProvider):
@@ -19,42 +19,41 @@ class Theb(BaseProvider):
     @staticmethod
     def create_completion(
         model: str,
-        messages: list[dict[str, str]],
-        stream: bool, **kwargs: Any) -> CreateResult:
-        
-        conversation = "\n".join(f"{message['role']}: {message['content']}" for message in messages)
-        conversation += "\nassistant: "
-        
+        messages: Messages,
+        stream: bool,
+        proxy: str = None,
+        **kwargs
+    ) -> CreateResult:
         auth = kwargs.get("auth", {
             "bearer_token":"free",
             "org_id":"theb",
         })
-        
+
         bearer_token = auth["bearer_token"]
         org_id       = auth["org_id"]
-        
+
         headers = {
-            'authority'         : 'beta.theb.ai',
-            'accept'            : 'text/event-stream',
-            'accept-language'   : 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
-            'authorization'     : 'Bearer '+bearer_token,
-            'content-type'      : 'application/json',
-            'origin'            : 'https://beta.theb.ai',
-            'referer'           : 'https://beta.theb.ai/home',
-            'sec-ch-ua'         : '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"',
-            'sec-ch-ua-mobile'  : '?0',
+            'authority': 'beta.theb.ai',
+            'accept': 'text/event-stream',
+            'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
+            'authorization': f'Bearer {bearer_token}',
+            'content-type': 'application/json',
+            'origin': 'https://beta.theb.ai',
+            'referer': 'https://beta.theb.ai/home',
+            'sec-ch-ua': '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"',
+            'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"Windows"',
-            'sec-fetch-dest'    : 'empty',
-            'sec-fetch-mode'    : 'cors',
-            'sec-fetch-site'    : 'same-origin',
-            'user-agent'        : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
-            'x-ai-model'        : 'ee8d4f29cb7047f78cbe84313ed6ace8',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+            'x-ai-model': 'ee8d4f29cb7047f78cbe84313ed6ace8',
         }
-        
+
         req_rand = random.randint(100000000, 9999999999)
 
         json_data: dict[str, Any] = {
-            "text"      : conversation,
+            "text"      : format_prompt(messages),
             "category"  : "04f58f64a4aa4191a957b47290fee864",
             "model"     : "ee8d4f29cb7047f78cbe84313ed6ace8",
             "model_params": {
@@ -66,10 +65,15 @@ class Theb(BaseProvider):
                 "long_term_memory"  : "auto"
             }
         }
-        
-        response = requests.post(f"https://beta.theb.ai/api/conversation?org_id={org_id}&req_rand={req_rand}",
-                                 headers=headers, json=json_data, stream=True)
-        
+
+        response = requests.post(
+            f"https://beta.theb.ai/api/conversation?org_id={org_id}&req_rand={req_rand}",
+            headers=headers,
+            json=json_data,
+            stream=True,
+            proxies={"https": proxy}
+        )
+
         response.raise_for_status()
         content = ""
         next_content = ""
@@ -78,7 +82,7 @@ class Theb(BaseProvider):
                 next_content = content
                 data = json.loads(chunk.decode().split("data: ")[1])
                 content = data["content"]
-                yield data["content"].replace(next_content, "")
+                yield content.replace(next_content, "")
 
     @classmethod
     @property

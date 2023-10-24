@@ -48,6 +48,9 @@ def chat_completions():
     elif model == 'bard':
         provider = Bard
         stream = False
+    elif model == 'gpt-3.5-turbo':
+        provider = Bard
+        stream = False
     else:
         provider = HuggingChat
         

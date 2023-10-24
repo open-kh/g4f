@@ -1,32 +1,30 @@
 from __future__ import annotations
 
+import asyncio
 import random
-
-from ..typing import CreateResult
+from typing import List, Type, Dict
+from ..typing import CreateResult, Messages
 from .base_provider import BaseProvider, AsyncProvider
+from .. import debug
 
 
 class RetryProvider(AsyncProvider):
-    __name__ = "RetryProvider"
-    working               = True
-    needs_auth            = False
-    supports_stream       = True
-    supports_gpt_35_turbo = False
-    supports_gpt_4        = False
+    __name__: str = "RetryProvider"
+    working: bool = True
+    supports_stream: bool = True
 
     def __init__(
         self,
-        providers: list[type[BaseProvider]],
+        providers: List[Type[BaseProvider]],
         shuffle: bool = True
     ) -> None:
-        self.providers = providers
-        self.shuffle = shuffle
-
+        self.providers: List[Type[BaseProvider]] = providers
+        self.shuffle: bool = shuffle
 
     def create_completion(
         self,
         model: str,
-        messages: list[dict[str, str]],
+        messages: Messages,
         stream: bool = False,
         **kwargs
     ) -> CreateResult:
@@ -37,45 +35,57 @@ class RetryProvider(AsyncProvider):
         if self.shuffle:
             random.shuffle(providers)
 
-        self.exceptions = {}
-        started = False
+        self.exceptions: Dict[str, Exception] = {}
+        started: bool = False
         for provider in providers:
             try:
+                if debug.logging:
+                    print(f"Using {provider.__name__} provider")
+                
                 for token in provider.create_completion(model, messages, stream, **kwargs):
                     yield token
                     started = True
+                
                 if started:
                     return
+                
             except Exception as e:
                 self.exceptions[provider.__name__] = e
+                if debug.logging:
+                    print(f"{provider.__name__}: {e.__class__.__name__}: {e}")
                 if started:
-                    break
+                    raise e
 
         self.raise_exceptions()
 
     async def create_async(
         self,
         model: str,
-        messages: list[dict[str, str]],
+        messages: Messages,
         **kwargs
     ) -> str:
-        providers = [provider for provider in self.providers if issubclass(provider, AsyncProvider)]
+        providers = self.providers
         if self.shuffle:
             random.shuffle(providers)
         
-        self.exceptions = {}
+        self.exceptions: Dict[str, Exception] = {}
         for provider in providers:
             try:
-                return await provider.create_async(model, messages, **kwargs)
+                return await asyncio.wait_for(
+                    provider.create_async(model, messages, **kwargs),
+                    timeout=kwargs.get("timeout", 60)
+                )
             except Exception as e:
                 self.exceptions[provider.__name__] = e
+                if debug.logging:
+                    print(f"{provider.__name__}: {e.__class__.__name__}: {e}")
     
         self.raise_exceptions()
     
-    def raise_exceptions(self):
+    def raise_exceptions(self) -> None:
         if self.exceptions:
-            raise RuntimeError("\n".join(["All providers failed:"] + [
+            raise RuntimeError("\n".join(["RetryProvider failed:"] + [
                 f"{p}: {self.exceptions[p].__class__.__name__}: {self.exceptions[p]}" for p in self.exceptions
             ]))
         
-        raise RuntimeError("No provider found")
+        raise RuntimeError("RetryProvider: No provider found")

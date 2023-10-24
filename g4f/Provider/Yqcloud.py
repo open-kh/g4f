@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from aiohttp import ClientSession
+import random
+from ..requests import StreamSession
 
-from ..typing import AsyncGenerator
+from ..typing import AsyncResult, Messages
 from .base_provider import AsyncGeneratorProvider, format_prompt
 
 
@@ -14,19 +15,23 @@ class Yqcloud(AsyncGeneratorProvider):
     @staticmethod
     async def create_async_generator(
         model: str,
-        messages: list[dict[str, str]],
+        messages: Messages,
         proxy: str = None,
+        timeout: int = 120,
         **kwargs,
-    ) -> AsyncGenerator:
-        async with ClientSession(
-            headers=_create_header()
+    ) -> AsyncResult:
+        async with StreamSession(
+            headers=_create_header(), proxies={"https": proxy}, timeout=timeout
         ) as session:
-            payload = _create_payload(messages)
-            async with session.post("https://api.aichatos.cloud/api/generateStream", proxy=proxy, json=payload) as response:
+            payload = _create_payload(messages, **kwargs)
+            async with session.post("https://api.aichatos.cloud/api/generateStream", json=payload) as response:
                 response.raise_for_status()
-                async for stream in response.content.iter_any():
-                    if stream:
-                        yield stream.decode()
+                async for chunk in response.iter_content():
+                    if chunk:
+                        chunk = chunk.decode()
+                        if "sorry, 您的ip已由于触发防滥用检测而被封禁" in chunk:
+                            raise RuntimeError("IP address is blocked by abuse detection.")
+                        yield chunk
 
 
 def _create_header():
@@ -34,15 +39,23 @@ def _create_header():
         "accept"        : "application/json, text/plain, */*",
         "content-type"  : "application/json",
         "origin"        : "https://chat9.yqcloud.top",
+        "referer"       : "https://chat9.yqcloud.top/"
     }
 
 
-def _create_payload(messages: list[dict[str, str]]):
+def _create_payload(
+    messages: Messages,
+    system_message: str = "",
+    user_id: int = None,
+    **kwargs
+):
+    if not user_id:
+        user_id = random.randint(1690000544336, 2093025544336)
     return {
         "prompt": format_prompt(messages),
         "network": True,
-        "system": "",
+        "system": system_message,
         "withoutContext": False,
         "stream": True,
-        "userId": "#/chat/1693025544336"
+        "userId": f"#/chat/{user_id}"
     }

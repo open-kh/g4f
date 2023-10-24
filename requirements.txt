@@ -10,5 +10,13 @@ flask
 flask-cors
 typing-extensions
 PyExecJS
+duckduckgo-search
+nest_asyncio
+waitress
+werkzeug
+loguru
+tiktoken
+pillow
+platformdirs
+numpy
 replicate
-Pillow

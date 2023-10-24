@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import requests
 
-from ...typing import Any, CreateResult
+from ...typing import Any, CreateResult, Messages
 from ..base_provider import BaseProvider
 
 
@@ -14,13 +14,16 @@ class AiService(BaseProvider):
     @staticmethod
     def create_completion(
         model: str,
-        messages: list[dict[str, str]],
+        messages: Messages,
         stream: bool,
         **kwargs: Any,
     ) -> CreateResult:
-        base = "\n".join(f"{message['role']}: {message['content']}" for message in messages)
-        base += "\nassistant: "
-
+        base = (
+            "\n".join(
+                f"{message['role']}: {message['content']}" for message in messages
+            )
+            + "\nassistant: "
+        )
         headers = {
             "accept": "*/*",
             "content-type": "text/plain;charset=UTF-8",
