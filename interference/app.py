@@ -17,7 +17,6 @@ from g4f.Provider import (
     OpenAssistant,
     OpenaiChat,
 )
-from  testing.log_time import log_time_yield
 
 app = Flask(__name__)
 CORS(app)
