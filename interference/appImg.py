@@ -32,7 +32,7 @@ def image_generate_temp():
     if barer != f"pk-{public_key}":
         return Response(response='Unauthorized', status=401)
 
-    out = ai.image_generate(prompt=f"{text}")
+    out = ai.image_generate(prompt=f"{text}, cinematic, dramatic")
     images = []
     for img in out['images']:
         imgID = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))

@@ -46,7 +46,7 @@ class Bing(AsyncGeneratorProvider):
     ) -> AsyncResult:
         if len(messages) < 2:
             prompt = messages[0]["content"]
-            context = create_context(messages[:-1]) or "You are Open Brain"
+            context = "You are Open Brain"
         else:
             prompt = messages[-1]["content"]
             context = create_context(messages[:-1])
@@ -56,10 +56,7 @@ class Bing(AsyncGeneratorProvider):
         return stream_generate(prompt, tone, image, context, proxy, cookies)
 
 def create_context(messages: Messages):
-    return "".join(
-        f"[{message['role']}]" + ("(#message)" if message['role']!="system" else "(#additional_instructions)") + f"\n{message['content']}\n\n"
-        for message in messages
-    )
+    return "".join(f"[{message['role']}]" + ("(#message)" if message['role']!="system" else "(#additional_instructions)") + f"\n{message['content']}\n\n" for message in messages)
 
 class Conversation():
     def __init__(self, conversationId: str, clientId: str, conversationSignature: str, imageInfo: dict=None) -> None:
