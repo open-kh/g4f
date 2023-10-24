@@ -30,4 +30,4 @@ COPY . .
 EXPOSE 80 1337
 
 # Define the default command to run the app using Python's module mode.
-ENTRYPOINT ["python", "-m", "g4f.cli"]
+ENTRYPOINT ["python", "-m", "interference.app"]
