@@ -46,7 +46,7 @@ class Bing(AsyncGeneratorProvider):
     ) -> AsyncResult:
         if len(messages) < 2:
             prompt = messages[0]["content"]
-            context = None
+            context = create_context(messages[:-1]) or "You are Open Brain"
         else:
             prompt = messages[-1]["content"]
             context = create_context(messages[:-1])
