@@ -4,7 +4,7 @@ import os
 import json
 
 sdxl_version=[
-    "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
+    # "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
     "c221b2b8ef527988fb59bf24a8b97c4561f1c671f73bd389f866bfb27c061316"
 ]
 
