@@ -8,7 +8,7 @@ from typing       import Any
 from flask        import Flask, request, Response
 from flask_cors   import CORS
 from transformers import AutoTokenizer
-from g4f          import ChatCompletion, models
+from g4f          import ChatCompletion, models, Provider
 from g4f.Provider import (
     Bard,
     Phind,
@@ -16,6 +16,13 @@ from g4f.Provider import (
     HuggingChat,
     OpenAssistant,
     OpenaiChat,
+    Vercel,
+    Llama2,
+    ChatgptAi,
+    You,
+    Yqcloud,
+    MyShell,
+    Hashnode
 )
 
 app = Flask(__name__)
@@ -39,21 +46,29 @@ def chat_completions():
     if barer != f"pk-{public_key}":
         return Response(response='Unauthorized', status=401)
 
-    check = False
-    if model == 'openai':
+    check = True
+    if model == 'bing':
         model = 'gpt-4'
         provider = Bing
-        check = True
     elif model == 'bard':
         provider = Bard
         stream = False
-    elif model == 'gpt-3.5-turbo':
-        provider = Bard
-        stream = False
+        check = False
+    elif model == 'openai':
+        model = 'gpt-3.5-turbo'
+        # provider = MyShell
+        provider = Phind
+
+    elif model == 'meta':
+        provider = Llama2
+        # model = models.default
+
+        model = models.llama70b_v2_chat.name
     else:
-        provider = HuggingChat
+        provider = None
+        model = models.default
         
-    print(model)
+    # print(model)
 
     response = ChatCompletion.create(
         model = models.default,
@@ -63,15 +78,14 @@ def chat_completions():
         auth=True,
     )
 
-
-    if check:
-        response = ChatCompletion.create(
-            model = model,
-            provider=provider,
-            stream = stream, 
-            messages = messages, 
-            auth=True,
-        )
+    # if check:
+    #     response = ChatCompletion.create(
+    #         model = model,
+    #         provider=provider,
+    #         stream = stream, 
+    #         messages = messages, 
+    #         auth=True,
+    #     )
 
     completion_id = ''.join(random.choices(string.ascii_letters + string.digits, k=28))
     completion_timestamp = int(time.time())

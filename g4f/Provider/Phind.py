@@ -32,7 +32,8 @@ class Phind(AsyncGeneratorProvider):
                 "language": "en",
                 "detailed": True,
                 "anonUserId": user_id,
-                "answerModel": "GPT-4",
+                "answerModel": "gpt-3.5-turbo",
+                # "answerModel": "GPT-4",
                 "creativeMode": False,
                 "customLinks": []
             },

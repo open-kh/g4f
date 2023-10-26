@@ -37,18 +37,19 @@ Bing: Hello! How can I help you today? 3.28 secs
 No Stream Total: 10.14 secs
 """
 
-gpt_access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJwaGVhcnVtLm5vcC5raEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0sImh0dHBzOi8vYXBpLm9wZW5haS5jb20vYXV0aCI6eyJ1c2VyX2lkIjoidXNlci01THExYnRhRHp2N2w4Y0xJYnJDUXV5T04ifSwiaXNzIjoiaHR0cHM6Ly9hdXRoMC5vcGVuYWkuY29tLyIsInN1YiI6ImF1dGgwfDY1MDcyYWFmNjEwNmZkN2E3MmU5MDk0MCIsImF1ZCI6WyJodHRwczovL2FwaS5vcGVuYWkuY29tL3YxIiwiaHR0cHM6Ly9vcGVu…VueXl3aDVFNHlPbzZJdEciLCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwcm9maWxlIG1vZGVsLnJlYWQgbW9kZWwucmVxdWVzdCBvcmdhbml6YXRpb24ucmVhZCBvcmdhbml6YXRpb24ud3JpdGUgb2ZmbGluZV9hY2Nlc3MifQ.tINb6O2Ny9B4_6QrC0f0orfXhSQnlejrapyROHjwQ4AvWt3V0m3XQRVNJIeMfcsT61mQj8jkwdiIuBqqvBG6LJ7lgBVzf6ZSsyvzSxPDiGGUOHeH2LhkouT9bjfEsURBZyf7BOLadn12eVPechzp3e4-wj07Gt3s8ZH6bnzUHi5yGIvEmv9fOr6ZnpJ3GJfrxMf-4EaSgSmc8xOzRChb6fRgfXHq551niLlAtUrlgK0rMOr-kyOZLO2aSCToFGSpD8Eq__bsMgFkaiAfmCHtSHZpcJHSDZynS0CUw_I9cduOMKkU-Sx8u8w7p8ORShGrtdu23kBD5nIV_SuoxrRuJw"
-
+gpt_access_token = '16117916cb06b62b8.7931458704|r=ap-southeast-1|meta=3|metabgclr=transparent|metaiconclr=%23757575|guitextcolor=%23000000|pk=3D86FBBA-9D22-402A-B512-3420086BA6CC|at=40|sup=1|rid=58|ag=101|cdn_url=https%3A%2F%2Ftcr9i.chat.openai.com%2Fcdn%2Ffc|lurl=https%3A%2F%2Faudio-ap-southeast-1.arkoselabs.com|surl=https%3A%2F%2Ftcr9i.chat.openai.com|smurl=https%3A%2F%2Ftcr9i.chat.openai.com%2Fcdn%2Ffc%2Fassets%2Fstyle-manager'
 # print("Bing: ", end="")
 for response in log_time_yield(
     g4f.ChatCompletion.create,
-    model=g4f.models.default,
+    # model= g4f.models.default,
+    model= g4f.models.llama70b_v2_chat,
     messages=[{
             "role": "system",
             "content": "You are Open Brain"
         },{"role": "user", "content": _instruct}],
-    # provider=g4f.Provider.Vercel,
-    provider=g4f.Provider.Theb,
+    provider=g4f.Provider.Vercel,
+    # access_token = gpt_access_token,
+    # provider=g4f.Provider.Theb,
     # cookies=g4f.get_cookies(".huggingface.co"),
     stream=True,
     auth=True

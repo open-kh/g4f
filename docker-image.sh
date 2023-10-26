@@ -3,9 +3,12 @@ GPT="gpt4"
 # docker stop $(docker ps -a -q)
 # docker rm $(docker ps -a -q)
 
-docker image build -t ${GPT}img:tag -f Dockerfile1 . #1337
-docker image build -t ${GPT}:tag . #5000
+docker rmi ${GPT}img:tag
 
+docker image build -t ${GPT}img:tag -f Dockerfile1 . #1337
+# docker image build -t ${GPT}:tag . #5000
+
+docker run -d -p 1333:1333 ${GPT}4img:tag
 
 # COUNT=6
 # PORT=1337
