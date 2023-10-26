@@ -7,6 +7,7 @@ import os
 import re
 import io
 import base64
+import requests
 import numpy as np
 import uuid
 import urllib.parse
@@ -30,6 +31,12 @@ default_cookies = {
     'SRCHUSR'       : '',
     'SRCHHPGUSR'    : '',
 }
+user_agent = [
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0",
+    'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0',
+    'Thunder Client (https://www.thunderclient.com)'
+]
 
 class Bing(AsyncGeneratorProvider):
     url             = "https://bing.com/chat"
@@ -437,6 +444,21 @@ async def stream_generate(
             cookies=cookies,
             headers=Defaults.headers,
         ) as session:
+        # headers = {
+        #     'User-Agent': random.choice(user_agent),
+        #     # 'Accept': '*/*',
+        #     'Accept': 'application/json',
+        #     'Accept-Language': 'en-US,en;q=0.5',
+        #     'Referer': 'https://replicate.com/stability-ai/sdxl',
+        #     'Content-Type': 'application/json',
+        #     'Origin': 'https://replicate.com',
+        #     'DNT': '1',
+        #     'Connection': 'keep-alive',
+        #     'Sec-Fetch-Dest': 'empty',
+        #     'Sec-Fetch-Mode': 'cors',
+        #     'Sec-Fetch-Site': 'same-origin',
+        #     'TE': 'trailers'
+        # }
         conversation = await create_conversation(session, tone, image, proxy)
         try:
             async with session.ws_connect('wss://sydney.bing.com/sydney/ChatHub', autoping=False, params={'sec_access_token': conversation.conversationSignature}, proxy=proxy) as wss:
@@ -468,11 +490,13 @@ async def stream_generate(
                                         response_txt += inline_txt + '\n'
                                 elif message.get('contentType') == "IMAGE":
                                     query = urllib.parse.quote(message.get('text'))
-                                    url = f"\nhttps://www.bing.com/images/create?q={query}"
+                                    # url = f"\nhttps://www.bing.com/images/create?q={query}"
+                                    url = image_generate(query)
                                     response_txt += url
-                                    print("Hello")
+                                    # print("Hello")
                                     final = True
                             if response_txt.startswith(returned_text):
+                                yield "I'll try\n"
                                 new = response_txt[len(returned_text):]
                                 if new != "\n":
                                     yield new
@@ -484,3 +508,13 @@ async def stream_generate(
                             return
         finally:
             await delete_conversation(session, conversation, proxy)
+
+def image_generate(text):
+    ai = StabilityAI()
+    out = ai.image_generate(prompt=f"{text}, cinematic, dramatic")
+    images = []
+    for img in out['images']:
+        images.append(f"![{out['prompt']}]({img})")
+
+    token = "\n".join(images)
+    return f"Sure, Here is the image:\n{token}\nDid you like it?"
