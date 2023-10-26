@@ -33,7 +33,7 @@ class StabilityAI:
         self.ver = random.choice(sdxl_version)
         
 
-    def image_generate(self, prompt, count=1, width=1024, height=1024, refine="expert_ensemble_refiner", scheduler="K_EULER", guidance_scale=7.5, high_noise_frac=0.8, prompt_strength=0.8, num_inference_steps=50):
+    def image_generate(self, prompt, count=1, width=1024, height=1024, refine="expert_ensemble_refiner", scheduler="K_EULER", guidance_scale=7.5, high_noise_frac=0.8, prompt_strength=0.8, num_inference_steps=30):
         try:
             # Check if count is within the valid range
             if count < 1 or count > 4:
@@ -71,11 +71,11 @@ class StabilityAI:
 
             payload = json.dumps({
                 "inputs": {
-                    "apply_watermark": False,
+                    # "apply_watermark": "Open Brain",
                     "width": width,
                     "height": height,
                     "prompt": prompt,
-                    "refine": refine or 'expert_ensemble_refiner',
+                    "refine": refine,
                     "scheduler": scheduler,
                     "num_outputs": count,
                     "guidance_scale": guidance_scale,
@@ -83,7 +83,7 @@ class StabilityAI:
                     "prompt_strength": prompt_strength,
                     "num_inference_steps": num_inference_steps,
                 },
-                "is_training": False,
+                # "is_training": False,
                 "version": self.ver
             })
 
