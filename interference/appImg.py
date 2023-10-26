@@ -9,8 +9,6 @@ from g4f.Provider import (
     StabilityAI
 )
 
-ai = StabilityAI()
-
 
 app = Flask(__name__)
 CORS(app)
@@ -22,6 +20,7 @@ public_key = "pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWMLtscqsdiKmhI"
 
 @app.route("/chat/image_generation", methods=['POST'])
 def image_generate_temp():
+    ai = StabilityAI()
     text = request.json.get('text')
     barer = request.headers.get('Authorization')
     if barer is None:
@@ -33,7 +32,6 @@ def image_generate_temp():
         return Response(response='Unauthorized', status=401)
 
     out = ai.image_generate(prompt=f"{text}, cinematic, dramatic")
-    # print(out)
     images = []
     for img in out['images']:
         imgID = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
