@@ -4,14 +4,20 @@ import os
 import json
 
 sdxl_version=[
-    # "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
+    "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
     "c221b2b8ef527988fb59bf24a8b97c4561f1c671f73bd389f866bfb27c061316"
+]
+
+user_agent = [
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0",
+    'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0',
 ]
 
 class StabilityAI:
     def __init__(self):
         self.headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0',
+                'User-Agent': random.choice(user_agent),
                 'Accept': 'application/json',
                 'Accept-Language': 'en-US,en;q=0.5',
                 'Referer': 'https://replicate.com/stability-ai/sdxl',
@@ -59,23 +65,26 @@ class StabilityAI:
                 raise ValueError("high_noise_frac must be 1 or less")
             
             self.ver = random.choice(sdxl_version)
-            # print(self.ver)
 
-            url = f"https://replicate.com/api/models/stability-ai/sdxl/versions/{self.ver}/predictions"
+            # url = f"https://replicate.com/api/models/stability-ai/sdxl/versions/{self.ver}/predictions"
+            url = "https://replicate.com/api/predictions"
 
             payload = json.dumps({
                 "inputs": {
+                    "apply_watermark": False,
                     "width": width,
                     "height": height,
                     "prompt": prompt,
-                    "refine": refine,
+                    "refine": refine or 'expert_ensemble_refiner',
                     "scheduler": scheduler,
                     "num_outputs": count,
                     "guidance_scale": guidance_scale,
                     "high_noise_frac": high_noise_frac,
                     "prompt_strength": prompt_strength,
-                    "num_inference_steps": num_inference_steps
-                }
+                    "num_inference_steps": num_inference_steps,
+                },
+                "is_training": False,
+                "version": self.ver
             })
 
             response = requests.request("POST", url, headers=self.headers, data=payload, timeout=1000)
@@ -86,7 +95,8 @@ class StabilityAI:
             #     print(line, end="")
 
             json_response = response.json()
-            uuid = json_response['uuid']
+            uuid = json_response['id']
+            # uuid = json_response['uuid']
             image_url = self.get_image_url(uuid,prompt)
 
             return image_url
@@ -108,14 +118,13 @@ class StabilityAI:
             return None
 
     def get_image_url(self, uuid,prompt):
-        url = f"https://replicate.com/api/models/stability-ai/sdxl/versions/{self.ver}/predictions/{uuid}"
-
+        url = f"https://replicate.com/api/predictions/{uuid}"
+        # url = f"https://replicate.com/api/models/stability-ai/sdxl/versions/{self.ver}/predictions/{uuid}"
         payload = {}
 
         response = requests.request("GET", url, headers=self.headers, data=payload,timeout=1000).json()
-
-        if response['prediction']['status'] == "succeeded":
-            output = {"prompt":prompt,"images":response['prediction']['output_files']}
+        if response['status'] == "succeeded":
+            output = {"prompt":prompt,"images":response['output']}
             return output
         else:
             return self.get_image_url(uuid,prompt)

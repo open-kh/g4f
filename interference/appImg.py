@@ -33,6 +33,7 @@ def image_generate_temp():
         return Response(response='Unauthorized', status=401)
 
     out = ai.image_generate(prompt=f"{text}, cinematic, dramatic")
+    # print(out)
     images = []
     for img in out['images']:
         imgID = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
