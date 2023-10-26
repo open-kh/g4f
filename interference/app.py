@@ -47,17 +47,17 @@ def chat_completions():
         return Response(response='Unauthorized', status=401)
 
     check = True
-    if model == 'bing':
+    if model == 'openai':
         model = 'gpt-4'
         provider = Bing
     elif model == 'bard':
         provider = Bard
         stream = False
         check = False
-    elif model == 'openai':
-        model = 'gpt-3.5-turbo'
-        # provider = MyShell
-        provider = Phind
+    # elif model == 'openai':
+    #     model = 'gpt-3.5-turbo'
+    #     # provider = MyShell
+    #     provider = Phind
 
     elif model == 'meta':
         provider = Llama2
