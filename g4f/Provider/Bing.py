@@ -470,6 +470,7 @@ async def stream_generate(
                 response_txt = ''
                 returned_text = ''
                 final = False
+                gen_image = False
                 while not final:
                     msg = await wss.receive(timeout=900)
                     objects = msg.data.split(Defaults.delimiter)
@@ -490,13 +491,13 @@ async def stream_generate(
                                         response_txt += inline_txt + '\n'
                                 elif message.get('contentType') == "IMAGE":
                                     query = urllib.parse.quote(message.get('text'))
+                                    gen_image = True
+                                    yield "I'll try\n"
                                     # url = f"\nhttps://www.bing.com/images/create?q={query}"
                                     url = image_generate(query)
                                     response_txt += url
-                                    # print("Hello")
                                     final = True
                             if response_txt.startswith(returned_text):
-                                yield "I'll try\n"
                                 new = response_txt[len(returned_text):]
                                 if new != "\n":
                                     yield new
