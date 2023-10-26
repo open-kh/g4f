@@ -15,6 +15,8 @@ from aiohttp        import ClientSession, ClientTimeout
 from ..typing       import AsyncResult, Messages
 from .base_provider import AsyncGeneratorProvider
 
+from .StabilityAI import StabilityAI
+
 class Tones():
     creative = "Creative"
     balanced = "Balanced"
@@ -468,6 +470,7 @@ async def stream_generate(
                                     query = urllib.parse.quote(message.get('text'))
                                     url = f"\nhttps://www.bing.com/images/create?q={query}"
                                     response_txt += url
+                                    print("Hello")
                                     final = True
                             if response_txt.startswith(returned_text):
                                 new = response_txt[len(returned_text):]

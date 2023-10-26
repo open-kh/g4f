@@ -1,4 +1,4 @@
-python3 -m interference.appImg
+python3 -m interference.app
 
 # COUNT=5
 # PORT=1337
