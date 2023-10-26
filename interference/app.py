@@ -62,23 +62,20 @@ def chat_completions():
     elif model == 'meta':
         provider = Llama2
         # model = models.default
-
         model = models.llama70b_v2_chat.name
     else:
         provider = None
         model = models.default
-        
-    # print(model)
 
     response = ChatCompletion.create(
-        model = models.default,
+        model = model,
         provider=provider,
         stream = stream, 
         messages = messages, 
         auth=True,
     )
-
     # if check:
+    # else:
     #     response = ChatCompletion.create(
     #         model = model,
     #         provider=provider,
