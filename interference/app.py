@@ -2,6 +2,7 @@ import json
 import time
 import random
 import string
+from tokenize import String
 import requests
 
 from typing       import Any
@@ -25,11 +26,37 @@ from g4f.Provider import (
     MyShell,
     Hashnode
 )
+from g4f.Provider.helper import get_cookies
+
+# from g4f import (Provider)
 
 app = Flask(__name__)
 CORS(app)
 
 public_key = "pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWMLtscqsdiKmhI"
+
+class ResModel:
+    def __init__(self,completion_id,model,chunk) -> None:
+        self.model = model if model is String else "default"
+        self.completion_id = completion_id
+        self.chunk = chunk
+
+    def to_dict(self):
+        return {
+            'id': f'chatcmpl-{self.completion_id}',
+            'object': 'chat.completion.chunk',
+            'created': int(time.time()),
+            'model': self.model,
+            'choices': [
+                {
+                    'index': 0,
+                    'delta': {
+                        'content': self.chunk,
+                    },
+                    'finish_reason': None,
+                }
+            ],
+        }
 
 @app.route('/chat/completions', methods=['POST'])
 def chat_completions():
@@ -48,6 +75,7 @@ def chat_completions():
         return Response(response='Unauthorized', status=401)
 
     check = True
+    myauth = False
     if model == 'bing':
         model = 'gpt-4'
         provider = Bing
@@ -60,12 +88,23 @@ def chat_completions():
         provider = Bing
 
     elif model == 'meta':
-        provider = Llama2
-        # model = models.default
-        model = models.llama70b_v2_chat.name
+        provider = HuggingChat
+        # model = "tiiuae/falcon-180B-chat"
+        # model = "meta-llama/Llama-2-70b-chat-hf"
+        model = models.default
+        myauth = True
     else:
         provider = None
         model = models.default
+
+    path_file = "./cookie.json"
+    with open(path_file, "r",encoding='utf-8') as f:
+        cookies = json.load(f)
+
+    if not cookies:
+        cookies = get_cookies(".huggingface.co")
+        with open(path_file, "w",encoding='utf-8') as f:
+            json.dump(cookies,f)
     
     # print(model)
 
@@ -74,6 +113,8 @@ def chat_completions():
         provider=provider,
         stream = stream, 
         messages = messages,
+        auth=myauth,
+        cookies= cookies
     )
     # if check:
     # else:
@@ -115,23 +156,8 @@ def chat_completions():
 
     def streaming():
         for chunk in response:
-            completion_data = {
-                'id': f'chatcmpl-{completion_id}',
-                'object': 'chat.completion.chunk',
-                'created': completion_timestamp,
-                'model': model,
-                'choices': [
-                    {
-                        'index': 0,
-                        'delta': {
-                            'content': chunk,
-                        },
-                        'finish_reason': None,
-                    }
-                ],
-            }
-
-            content = json.dumps(completion_data, separators=(',', ':'))
+            mydict = ResModel(completion_id, model,chunk)
+            content = json.dumps(mydict.to_dict(), separators=(',', ':'))
             yield f'data: {content}\n\n'
             time.sleep(0.1)
 
