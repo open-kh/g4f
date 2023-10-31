@@ -37,7 +37,7 @@ from .You             import You
 from .Yqcloud         import Yqcloud
 from .Geekgpt         import GeekGpt
 from .StabilityAI     import StabilityAI
-from .perplexity      import Perplexity
+from .perplexity.perplexity import Perplexity
 
 from .base_provider  import BaseProvider, AsyncProvider, AsyncGeneratorProvider
 from .retry_provider import RetryProvider

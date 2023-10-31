@@ -113,18 +113,18 @@ def chat_completions():
     
     # print(model)
 
-    if perplexity:
-        perplixAI = Perplexity()
-        response = perplixAI.search(create_context(messages))
-    else:
-        response = ChatCompletion.create(
-            model = model,
-            provider=provider,
-            stream = stream, 
-            messages = messages,
-            auth=myauth,
-            cookies= cookies
-        )
+    # if perplexity:
+    #     perplixAI = Perplexity()
+    #     response = perplixAI.search(create_context(messages))
+    # else:
+    response = ChatCompletion.create(
+        model = model,
+        provider=provider,
+        stream = stream, 
+        messages = messages,
+        auth=myauth,
+        cookies= cookies
+    )
     # if check:
     # else:
     #     response = ChatCompletion.create(
