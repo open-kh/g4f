@@ -7,9 +7,9 @@ RUN python3 -m venv venv
 RUN . venv/bin/activate
 
 RUN pip install --upgrade pip
-RUN pip install -r interference/requirements.txt
-
 COPY . .
+
+RUN pip install -r interference/requirements.txt
 
 CMD [ "python", "-m" , "interference.appImg"]
 # CMD [ "python", "-m" , "interference.app"]

@@ -12,7 +12,7 @@ from transformers import AutoTokenizer
 from g4f          import ChatCompletion, models, Provider
 from g4f.Provider import (
     Bard,
-    Perplexity,
+    # Perplexity,
     Phind,
     Bing,
     Liaobots,
