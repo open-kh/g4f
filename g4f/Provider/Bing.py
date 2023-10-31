@@ -55,6 +55,7 @@ class Bing(AsyncGeneratorProvider):
     ) -> AsyncResult:
         if model != 'gpt-4':
             tone = Tones.precise
+            
         if len(messages) < 2:
             prompt = messages[0]["content"]
             context = "You are Open Brain"
