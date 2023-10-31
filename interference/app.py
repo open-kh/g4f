@@ -57,8 +57,7 @@ def chat_completions():
         check = False
     elif model == 'openai':
         model = 'gpt-3.5-turbo-16k'
-        # model = mode
-        provider = Liaobots
+        provider = Bing
 
     elif model == 'meta':
         provider = Llama2
