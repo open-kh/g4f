@@ -100,7 +100,7 @@ def format_prompt(messages: Messages, add_special_tokens=False) -> str:
     formatted = "\n".join(
         [
             f'{message["role"].capitalize()}: {message["content"]}'
-            for message in messages
+            for message in (messages[-2:] if len(messages)>2 else messages)
         ]
     )
     return f"{formatted}\nAssistant:"
