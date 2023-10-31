@@ -20,4 +20,3 @@ pillow
 platformdirs
 numpy
 replicate
-perplexity
