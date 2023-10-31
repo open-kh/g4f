@@ -69,7 +69,7 @@ class Bing(AsyncGeneratorProvider):
         return stream_generate(prompt, tone, image, context, proxy, cookies)
 
 def create_context(messages: Messages):
-    return "".join(f"[{message['role']}]" + ("(#prompt)" if message['role']!="assistant" else "(#assistant)" if message['role']!="system" else "(#additional_instructions)") + f"\n{message['content']}\n\n" for message in messages)
+    return "".join(f"[{message['role']}]" + ("(#prompt)" if message['role']!="assistant" else "(#assistant)" if message['role']!="system" else "(#additional_instructions)") + f"\n{message['content']}\n\n" for message in (messages[-4:] if len(messages)>4 else messages))
 
 class Conversation():
     def __init__(self, conversationId: str, clientId: str, conversationSignature: str, imageInfo: dict=None) -> None:

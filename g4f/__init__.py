@@ -71,6 +71,8 @@ class ChatCompletion:
         if provider.needs_auth:
             kwargs['auth'] = auth
 
+        print(model.name, provider)
+
         result = provider.create_completion(model.name, messages, stream, **kwargs)
         return result if stream else ''.join(result)
 
