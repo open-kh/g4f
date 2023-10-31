@@ -36,7 +36,8 @@ from .Ylokh           import Ylokh
 from .You             import You
 from .Yqcloud         import Yqcloud
 from .Geekgpt         import GeekGpt
-from .StabilityAI   import StabilityAI
+from .StabilityAI     import StabilityAI
+from .perplexity      import Perplexity
 
 from .base_provider  import BaseProvider, AsyncProvider, AsyncGeneratorProvider
 from .retry_provider import RetryProvider
@@ -44,8 +45,11 @@ from .deprecated     import *
 from .needs_auth     import *
 from .unfinished     import *
 
+
 class ProviderUtils:
     convert: dict[str, BaseProvider] = {
+        'StabilityAI': StabilityAI,
+        'Perplexity': Perplexity,
         'AItianhu': AItianhu,
         'AItianhuSpace': AItianhuSpace,
         'Acytoo': Acytoo,

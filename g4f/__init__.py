@@ -5,6 +5,7 @@ from .Provider  import BaseProvider, RetryProvider
 from .typing    import Messages, CreateResult, Union, List
 from .          import debug
 
+name: str = "g4f"
 version       = '0.1.7.6'
 version_check = True
 

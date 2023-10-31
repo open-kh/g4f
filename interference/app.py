@@ -12,6 +12,7 @@ from transformers import AutoTokenizer
 from g4f          import ChatCompletion, models, Provider
 from g4f.Provider import (
     Bard,
+    Perplexity,
     Phind,
     Bing,
     Liaobots,
@@ -27,7 +28,7 @@ from g4f.Provider import (
     Hashnode
 )
 from g4f.Provider.helper import get_cookies
-
+from g4f.Provider.Bing import (create_context)
 # from g4f import (Provider)
 
 app = Flask(__name__)
@@ -75,6 +76,7 @@ def chat_completions():
         return Response(response='Unauthorized', status=401)
 
     check = True
+    perplexity = False
     myauth = False
     if model == 'bing':
         model = 'gpt-4'
@@ -86,6 +88,9 @@ def chat_completions():
     elif model == 'openai':
         model = 'gpt-3.5-turbo-16k'
         provider = Bing
+
+    elif model == 'perplixity':
+        perplexity = True
 
     elif model == 'meta':
         provider = HuggingChat
@@ -108,14 +113,18 @@ def chat_completions():
     
     # print(model)
 
-    response = ChatCompletion.create(
-        model = model,
-        provider=provider,
-        stream = stream, 
-        messages = messages,
-        auth=myauth,
-        cookies= cookies
-    )
+    if perplexity:
+        perplixAI = Perplexity()
+        response = perplixAI.search(create_context(messages))
+    else:
+        response = ChatCompletion.create(
+            model = model,
+            provider=provider,
+            stream = stream, 
+            messages = messages,
+            auth=myauth,
+            cookies= cookies
+        )
     # if check:
     # else:
     #     response = ChatCompletion.create(
