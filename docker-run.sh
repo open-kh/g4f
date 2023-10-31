@@ -5,8 +5,8 @@ docker stop $(docker ps -a -q) #stop container
 docker rm -f $(docker ps -a -q) # remove container
 
 GPT="gpt4"
-docker image build -t gpt4img:tag -f Dockerfile1 . #1337
 docker image build -t gpt4:tag . #5000
+docker image build -t gpt4img:tag -f Dockerfile1 . #1337
 # docker image build -t ${GPT}img:tag -f Dockerfile1 . #1337
 # docker image build -t ${GPT}:tag . #5000
 
