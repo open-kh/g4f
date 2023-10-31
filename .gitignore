@@ -25,6 +25,8 @@ conversations.pkl
 accounts.txt
 
 .idea/
+*/**/*/__pycache__/
+*/**/__pycache__/
 **/__pycache__/
 __pycache__/
 

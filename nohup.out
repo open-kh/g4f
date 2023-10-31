@@ -1,0 +1,43 @@
+New pypi version: 0.1.7.6 (current: 0.1.4.8) | pip install -U g4f
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:1337
+ * Running on http://192.168.10.84:1337
+Press CTRL+C to quit
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 505-085-818
+127.0.0.1 - - [24/Oct/2023 08:10:28] "POST /chat/completions HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2023 08:18:41] "POST /chat/completions HTTP/1.1" 401 -
+127.0.0.1 - - [24/Oct/2023 08:19:06] "POST /chat/completions HTTP/1.1" 200 -
+ * Detected change in '/home/linx/smis/templates/gpt4free/interference/app.py', reloading
+ * Detected change in '/home/linx/smis/templates/gpt4free/interference/app.py', reloading
+ * Detected change in '/home/linx/smis/templates/gpt4free/interference/app.py', reloading
+New pypi version: 0.1.7.6 (current: 0.1.4.8) | pip install -U g4f
+meta
+[{'role': 'system', 'content': 'You are Open Brain'}, {'role': 'user', 'content': 'Hello, Who are you? and give what you can do'}]
+gpt-4
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 505-085-818
+ * Detected change in '/home/linx/smis/templates/gpt4free/g4f/Provider/Bing.py', reloading
+ * Detected change in '/home/linx/smis/templates/gpt4free/g4f/Provider/Bing.py', reloading
+ * Detected change in '/home/linx/smis/templates/gpt4free/g4f/Provider/Bing.py', reloading
+Failed to check g4f pypi version: HTTPSConnectionPool(host='pypi.org', port=443): Max retries exceeded with url: /pypi/g4f/json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7f5a3b8fbf90>: Failed to resolve 'pypi.org' ([Errno -3] Temporary failure in name resolution)"))
+ * Restarting with watchdog (inotify)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/linx/smis/templates/gpt4free/interference/app.py", line 11, in <module>
+    from g4f          import ChatCompletion, models
+  File "/home/linx/smis/templates/gpt4free/g4f/__init__.py", line 2, in <module>
+    from g4f        import models
+  File "/home/linx/smis/templates/gpt4free/g4f/models.py", line 4, in <module>
+    from .Provider   import BaseProvider, RetryProvider
+  File "/home/linx/smis/templates/gpt4free/g4f/Provider/__init__.py", line 9, in <module>
+    from .Bing          import Bing
+  File "/home/linx/smis/templates/gpt4free/g4f/Provider/Bing.py", line 15, in <module>
+    from ..typing       import AsyncResult, Messages
+ImportError: cannot import name 'AsyncResult' from 'g4f.typing' (/home/linx/smis/templates/gpt4free/g4f/typing.py)
