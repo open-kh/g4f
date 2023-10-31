@@ -1,6 +1,7 @@
 # Use the official lightweight Python image.
 # https://hub.docker.com/_/python
-FROM python:3.9-slim
+# FROM python:3.9-slim
+FROM python:3.8-slim-buster
 
 # Ensure Python outputs everything immediately (useful for real-time logging in Docker).
 ENV PYTHONUNBUFFERED 1
