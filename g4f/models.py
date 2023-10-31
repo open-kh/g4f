@@ -228,6 +228,7 @@ llama7b_v2_chat = Model(
     best_provider = Vercel)
 
 llama70b_v2_chat = Model(
+    # name          = 'replicate:replicate/llama-2-70b-chat',
     name          = 'replicate/llama70b-v2-chat',
     base_provider = 'replicate',
     best_provider = Vercel)

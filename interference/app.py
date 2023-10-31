@@ -13,6 +13,7 @@ from g4f.Provider import (
     Bard,
     Phind,
     Bing,
+    Liaobots,
     HuggingChat,
     OpenAssistant,
     OpenaiChat,
@@ -55,9 +56,9 @@ def chat_completions():
         stream = False
         check = False
     elif model == 'openai':
-        # model = 'gpt-3.5-turbo'
-        model = models.default
-        provider = Phind
+        model = 'gpt-3.5-turbo-16k'
+        # model = mode
+        provider = Liaobots
 
     elif model == 'meta':
         provider = Llama2
@@ -66,13 +67,14 @@ def chat_completions():
     else:
         provider = None
         model = models.default
+    
+    # print(model)
 
     response = ChatCompletion.create(
         model = model,
         provider=provider,
         stream = stream, 
-        messages = messages, 
-        auth=True,
+        messages = messages,
     )
     # if check:
     # else:

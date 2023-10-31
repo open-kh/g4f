@@ -7,6 +7,12 @@ from ..typing import AsyncResult, Messages
 from ..requests import StreamSession
 from .base_provider import AsyncGeneratorProvider, format_prompt
 
+phindModel = [
+    "Phind Model",
+    "GPT-3.5-Turbo",
+    "GPT-4"
+]
+useCreativeMode = True # True for Ignor search
 
 class Phind(AsyncGeneratorProvider):
     url = "https://www.phind.com"
@@ -18,7 +24,7 @@ class Phind(AsyncGeneratorProvider):
         cls,
         model: str,
         messages: Messages,
-        proxy: str = None,
+        proxy: str = None, # type: ignore
         timeout: int = 120,
         **kwargs
     ) -> AsyncResult:
@@ -32,7 +38,6 @@ class Phind(AsyncGeneratorProvider):
                 "language": "en",
                 "detailed": True,
                 "anonUserId": user_id,
-                # "answerModel": "gpt-3.5-turbo",
                 "answerModel": "GPT-4",
                 "creativeMode": False,
                 "customLinks": []
