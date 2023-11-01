@@ -199,11 +199,12 @@ class Perplexity:
                 self.finished = True
                 return {"error": "timeout"}
             if len(self.queue) != 0:
-                doc = self.queue.pop(0)
-                doc_len = len(doc["chunks"]) if "chunks" in doc else doc_len
-                content = "".join(doc["chunks"][-(doc_len-count):] if doc_len > count else doc["chunks"])
-                yield content
-                count = doc_len
+                # doc = self.queue.pop(0)
+                # doc_len = len(doc["chunks"]) if "chunks" in doc else doc_len
+                # content = "".join(doc["chunks"][-(doc_len-count):] if doc_len > count else doc["chunks"])
+                # yield content
+                yield self.queue.pop(0)
+                # count = doc_len
 
 
     def search_sync(self, query: str, mode: str = "concise", search_focus: str = "internet", attachments: list[str] = [], language: str = "en-GB", timeout: float = 30, in_page: str = None, in_domain: str = None) -> dict:
