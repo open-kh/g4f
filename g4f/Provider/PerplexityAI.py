@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+from urllib import response
 from perplexity import Perplexity
 
 import random, string
@@ -11,6 +12,7 @@ perplex = Perplexity()
 
 class PerplexityAI(AsyncGeneratorProvider):
     working = True
+    count_check = 0
     @classmethod
     async def create_async_generator(
         cls,
@@ -21,22 +23,33 @@ class PerplexityAI(AsyncGeneratorProvider):
         timeout: int = 120,
         **kwargs
     ) -> AsyncResult:
-        chars = string.ascii_lowercase + string.digits
-        user_id = ''.join(random.choice(chars) for _ in range(24))
-
-        count = 0
-        response = perplex.search(format_prompt(messages), mode = model, search_focus=search_focus) # type: ignore
-        line_len = 0
-        # data = []
-        for line in response:
-            # data.append(line)
-            line_len = len(line["chunks"]) if "chunks" in line else line_len
-            content = "".join(line["chunks"][-(line_len-count):] if line_len > count else line["chunks"])
-            yield content
-            count = line_len
+        # chars = string.ascii_lowercase + string.digits
+        # user_id = ''.join(random.choice(chars) for _ in range(24))
+        doct = ""
+        for line in perplex.search(format_prompt(messages), mode = model, search_focus=search_focus): # type: ignore
+            text = cls.check_answer(line)
+            yield text[len(doct):]
+            doct = text
 
         perplex.close()
         # print(json.dumps(data))
+
+
+    @classmethod
+    def check_answer(cls, response):
+        try:
+            text = ""
+            if 'answer' in response:
+                text = response['answer']
+            elif 'chunks' in response:
+                text = "".join(response['chunks'])
+            elif 'text' in response:
+                response["answer"] = json.decoder(response['text'])
+                cls.check_answer(response)
+
+            return text
+        except json.decoder.JSONDecodeError:
+            pass
 
 
     @classmethod

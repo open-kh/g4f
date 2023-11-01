@@ -53,8 +53,11 @@ class Bing(AsyncGeneratorProvider):
         image: str = None,
         **kwargs
     ) -> AsyncResult:
-        if model != 'gpt-4':
-            tone = Tones.precise
+        # if model != 'gpt-4':
+        #     tone = Tones.precise
+        # else:
+        #     tone = 
+        tone = Tones.precise if model != 'gpt-4' else Tones.creative
             
         if len(messages) < 2:
             prompt = messages[0]["content"]
