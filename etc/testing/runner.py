@@ -1,12 +1,15 @@
 import json
-from g4f.Provider import (PerplexityAI)
+from g4f import ChatCompletion, models, Provider
 
-perplexity = PerplexityAI()
-question = "Hello, What is your name"
-answer = perplexity.search(question)
-count = 0
-for doc in answer:
-    print(doc)
+question = "Hello, How are you?"
+for response in ChatCompletion.create(
+                                    model='concise',
+                                    provider= Provider.PerplexityAI,
+                                    messages=[{"role": "user", "content": question}],
+                                    temperature=0.1,
+                                    stream=True
+                                ):
+    print(response, end="", flush=True)
     # doc_len = len(doc["chunks"])
     # content = "".join(doc["chunks"][-(doc_len-count):] if doc_len > count else doc["chunks"])
     # count = doc_len
@@ -19,4 +22,4 @@ for doc in answer:
         # }
         # print(json.dumps(a, separators=(',', ':')))
 
-perplexity.close()
+# perplexity.close()

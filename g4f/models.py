@@ -1,9 +1,12 @@
 from __future__  import annotations
 from dataclasses import dataclass
+
+
 from .typing     import Union
 from .Provider   import BaseProvider, RetryProvider
 from .Provider   import (
     GptForLove,
+    PerplexityAI,
     ChatgptAi,
     GptChatly,
     ChatgptX,
@@ -55,6 +58,16 @@ gpt_35_long = Model(
         FakeGpt
     ])
 )
+
+# H2o
+copilot = Model(
+    name          = "copilot",
+    base_provider = 'perplexity',
+    best_provider = PerplexityAI)
+concise = Model(
+    name          = "concise",
+    base_provider = 'perplexity',
+    best_provider = PerplexityAI)
 
 # GPT-3.5 / GPT-4
 gpt_35_turbo = Model(
@@ -236,6 +249,8 @@ llama70b_v2_chat = Model(
 
 class ModelUtils:
     convert: dict[str, Model] = {
+        'concise'    : concise,
+        'copilot'    : copilot,
         # gpt-3.5
         'gpt-3.5-turbo'          : gpt_35_turbo,
         'gpt-3.5-turbo-0613'     : gpt_35_turbo_0613,

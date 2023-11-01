@@ -1,24 +1,23 @@
 from __future__ import annotations
-
+import json
 from perplexity import Perplexity
 
 import random, string
-from datetime import datetime
 
 from ..typing import AsyncResult, Messages
-from ..requests import StreamSession
 from .base_provider import AsyncGeneratorProvider, format_prompt
 
 perplex = Perplexity()
 
-class PerplexityAI:
-
+class PerplexityAI(AsyncGeneratorProvider):
+    working = True
     @classmethod
     async def create_async_generator(
         cls,
-        model: str = None,
+        model: str, # type: ignore
         messages: Messages,
-        proxy: str = None,
+        search_focus: str = "internet",
+        proxy: str = None, # type: ignore
         timeout: int = 120,
         **kwargs
     ) -> AsyncResult:
@@ -26,14 +25,18 @@ class PerplexityAI:
         user_id = ''.join(random.choice(chars) for _ in range(24))
 
         count = 0
-        async with perplex.search(format_prompt(messages)) as response: # type: ignore
-            response.raise_for_status()
-            line_len = 0
-            async for line in response.iter_lines():
-                line_len = len(line["chunks"]) if "chunks" in line else line_len
-                content = "".join(line["chunks"][-(line_len-count):] if line_len > count else line["chunks"])
-                yield content
-                count = line_len
+        response = perplex.search(format_prompt(messages), mode = model, search_focus=search_focus) # type: ignore
+        line_len = 0
+        # data = []
+        for line in response:
+            # data.append(line)
+            line_len = len(line["chunks"]) if "chunks" in line else line_len
+            content = "".join(line["chunks"][-(line_len-count):] if line_len > count else line["chunks"])
+            yield content
+            count = line_len
+
+        perplex.close()
+        # print(json.dumps(data))
 
 
     @classmethod

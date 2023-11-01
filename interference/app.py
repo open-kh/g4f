@@ -89,9 +89,10 @@ def chat_completions():
         model = 'gpt-3.5-turbo-16k'
         provider = Bing
 
-    elif model == 'perplixity':
+    elif model == 'perplexity':
         perplexity = True
         provider = PerplexityAI
+        model = "concise"
 
     elif model == 'meta':
         provider = HuggingChat
