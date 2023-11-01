@@ -37,7 +37,7 @@ from .You             import You
 from .Yqcloud         import Yqcloud
 from .Geekgpt         import GeekGpt
 from .StabilityAI     import StabilityAI
-# from .perplexity import Perplexity
+from .PerplexityAI import PerplexityAI
 
 from .base_provider  import BaseProvider, AsyncProvider, AsyncGeneratorProvider
 from .retry_provider import RetryProvider
@@ -49,7 +49,7 @@ from .unfinished     import *
 class ProviderUtils:
     convert: dict[str, BaseProvider] = {
         'StabilityAI': StabilityAI,
-        # 'Perplexity': Perplexity,
+        'PerplexityAI': PerplexityAI,
         'AItianhu': AItianhu,
         'AItianhuSpace': AItianhuSpace,
         'Acytoo': Acytoo,
@@ -123,7 +123,7 @@ class ProviderUtils:
     }
 
 __all__ = [
-    # 'Perplexity',
+    'PerplexityAI',
     'StabilityAI',
     'BaseProvider',
     'AsyncProvider',

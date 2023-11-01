@@ -1,7 +1,7 @@
 import json
-from g4f.Provider import (Perplexity)
+from g4f.Provider import (PerplexityAI)
 
-perplexity = Perplexity()
+perplexity = PerplexityAI()
 question = "Hello, What is your name"
 answer = perplexity.search(question)
 count = 0

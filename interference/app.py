@@ -12,7 +12,7 @@ from transformers import AutoTokenizer
 from g4f          import ChatCompletion, models, Provider
 from g4f.Provider import (
     Bard,
-    # Perplexity,
+    PerplexityAI,
     Phind,
     Bing,
     Liaobots,
@@ -91,6 +91,7 @@ def chat_completions():
 
     elif model == 'perplixity':
         perplexity = True
+        provider = PerplexityAI
 
     elif model == 'meta':
         provider = HuggingChat
@@ -114,7 +115,7 @@ def chat_completions():
     # print(model)
 
     # if perplexity:
-    #     perplixAI = Perplexity()
+    #     perplixAI = PerplexityAI()
     #     response = perplixAI.search(create_context(messages))
     # else:
     response = ChatCompletion.create(

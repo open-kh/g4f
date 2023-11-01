@@ -20,3 +20,4 @@ pillow
 platformdirs
 numpy
 replicate
+websocket-client
