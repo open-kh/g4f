@@ -23,4 +23,5 @@ done
 docker run -d -p 1333:1333 gpt4img:tag
 # docker run -d -p 1342:1333 ${GPT}:tag
 
+sh docker-reload.sh
 # docker ps -al
