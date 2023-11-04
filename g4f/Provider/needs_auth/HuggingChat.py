@@ -27,13 +27,16 @@ class HuggingChat(AsyncGeneratorProvider):
         cookies: dict = None,
         **kwargs
     ) -> AsyncResult:
-        model = model if model else cls.model
+        # model = model if model else cls.model
+        model = cls.model
         if proxy and "://" not in proxy:
             proxy = f"http://{proxy}"
         if not cookies:
+            path_file = "./cookie.json"
             cookies = get_cookies(".huggingface.co")
+            with open(path_file, "w",encoding='utf-8') as f:
+                json.dump(cookies,f)
         
-
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
         }

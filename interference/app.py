@@ -66,6 +66,8 @@ def chat_completions():
         return Response(response='Unauthorized', status=401)
 
     myauth = None
+    cookies = None
+
     if model == 'bing':
         model = 'gpt-4'
         provider = Phind
@@ -82,30 +84,24 @@ def chat_completions():
 
     elif model == 'meta':
         provider = HuggingChat
-        # model = "tiiuae/falcon-180B-chat"
-        # model = "meta-llama/Llama-2-70b-chat-hf"
-        model = models.default
+        path_file = "./cookie.json"
+        with open(path_file, "r",encoding='utf-8') as f:
+            cookies = json.load(f)
+
+        model = "meta-llama/Llama-2-70b-chat-hf"
         myauth = '&#39'
     else:
         provider = None
         model = models.default
 
-    path_file = "./cookie.json"
-    with open(path_file, "r",encoding='utf-8') as f:
-        cookies = json.load(f)
-
-    if not cookies:
-        cookies = get_cookies(".huggingface.co")
-        with open(path_file, "w",encoding='utf-8') as f:
-            json.dump(cookies,f)
     
     response = ChatCompletion.create(
         model = model,
-        provider=provider,
+        provider = provider,
         stream = stream, 
         messages = messages,
-        auth=myauth,
-        cookies= cookies
+        auth = myauth,
+        cookies = cookies
     )
 
     completion_id = ''.join(random.choices(string.ascii_letters + string.digits, k=28))
