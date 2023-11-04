@@ -17,6 +17,7 @@ from .ChatgptFree     import ChatgptFree
 from .ChatgptLogin    import ChatgptLogin
 from .ChatgptX        import ChatgptX
 from .Cromicle        import Cromicle
+from .DeepInfra       import DeepInfra
 from .FakeGpt         import FakeGpt
 from .FreeGpt         import FreeGpt
 from .GPTalk          import GPTalk
@@ -35,9 +36,10 @@ from .Vercel          import Vercel
 from .Ylokh           import Ylokh
 from .You             import You
 from .Yqcloud         import Yqcloud
-from .Geekgpt         import GeekGpt
+from .GeekGpt         import GeekGpt
 from .StabilityAI     import StabilityAI
-from .PerplexityAI import PerplexityAI
+from .PerplexityAI   import PerplexityAI
+from .Edge           import Edge
 
 from .base_provider  import BaseProvider, AsyncProvider, AsyncGeneratorProvider
 from .retry_provider import RetryProvider
@@ -48,6 +50,7 @@ from .unfinished     import *
 
 class ProviderUtils:
     convert: dict[str, BaseProvider] = {
+        'Edge': Edge,
         'StabilityAI': StabilityAI,
         'PerplexityAI': PerplexityAI,
         'AItianhu': AItianhu,
@@ -75,6 +78,7 @@ class ProviderUtils:
         'ChatgptX': ChatgptX,
         'CodeLinkAva': CodeLinkAva,
         'Cromicle': Cromicle,
+        'DeepInfra': DeepInfra,
         'DfeHub': DfeHub,
         'EasyChat': EasyChat,
         'Equing': Equing,
@@ -114,7 +118,7 @@ class ProviderUtils:
         'Ylokh': Ylokh,
         'You': You,
         'Yqcloud': Yqcloud,
-        'Geekgpt': GeekGpt,
+        'GeekGpt': GeekGpt,
         
         'BaseProvider': BaseProvider,
         'AsyncProvider': AsyncProvider,
@@ -123,6 +127,7 @@ class ProviderUtils:
     } # type: ignore
 
 __all__ = [
+    'Edge',
     'PerplexityAI',
     'StabilityAI',
     'BaseProvider',
@@ -151,6 +156,7 @@ __all__ = [
     'ChatgptLogin',
     'ChatgptX',
     'Cromicle',
+    'DeepInfra',
     'CodeLinkAva',
     'DfeHub',
     'EasyChat',

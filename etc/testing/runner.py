@@ -32,10 +32,11 @@ def perplex():
 
 def runner():
     for response in ChatCompletion.create(
-            model=['concise','gpt-4','gpt-3.5-turbo','perplexity'][1],
-            provider= Provider.Bing,
+            model=['concise','gpt-4','gpt-3.5-turbo','perplexity'][2],
+            provider= Provider.Phind,
             messages=[{"role": "user", "content": question}],
             temperature=0.1,
+            auth=True,
             stream=True
         ):
         print(response, end="", flush=True)

@@ -12,16 +12,18 @@ WORKDIR /
 # Update the system packages and install system-level dependencies required for compilation.
 # gcc: Compiler required for some Python packages.
 # build-essential: Contains necessary tools and libraries for building software.
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  gcc \
-  build-essential \
-  && rm -rf /var/lib/apt/lists/*
+
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#   gcc \
+#   build-essential \
+#   && rm -rf /var/lib/apt/lists/*
 
 # Copy the project's requirements file into the container.
 COPY requirements.txt .
 
 # Upgrade pip for the latest features and install the project's Python dependencies.
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# RUN pip install --upgrade pip && 
+RUN pip install -r requirements.txt
 # RUN pip install git+https://github.com/nathanrchn/perplexityai.git
 
 # Copy the entire project into the container.

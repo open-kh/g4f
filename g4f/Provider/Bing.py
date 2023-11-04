@@ -18,6 +18,9 @@ from .base_provider import AsyncGeneratorProvider
 
 from .StabilityAI import StabilityAI
 
+bundleVersion="1.1326.5"
+# 1.1199.4
+
 class Tones():
     creative = "Creative"
     balanced = "Balanced"
@@ -39,9 +42,10 @@ user_agent = [
 ]
 
 class Bing(AsyncGeneratorProvider):
-    url             = "https://bing.com/chat"
-    working         = True
-    supports_gpt_4  = True
+    url = "https://bing.com/chat"
+    working = True
+    supports_message_history = True
+    supports_gpt_4 = True
         
     @staticmethod
     def create_async_generator(
@@ -82,13 +86,14 @@ class Conversation():
         self.imageInfo = imageInfo
 
 async def create_conversation(session: ClientSession, tone: str, image: str = None, proxy: str = None) -> Conversation:
-    url = 'https://www.bing.com/turing/conversation/create?bundleVersion=1.1199.4'
+    url = f'https://www.bing.com/turing/conversation/create?bundleVersion={bundleVersion}'
     async with await session.get(url, proxy=proxy) as response:
         data = await response.json()
 
         conversationId = data.get('conversationId')
         clientId = data.get('clientId')
         conversationSignature = response.headers.get('X-Sydney-Encryptedconversationsignature')
+        print(conversationSignature)
 
         if not conversationId or not clientId or not conversationSignature:
             raise Exception('Failed to create conversation.')

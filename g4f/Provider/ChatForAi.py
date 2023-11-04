@@ -9,8 +9,9 @@ from .base_provider import AsyncGeneratorProvider
 
 
 class ChatForAi(AsyncGeneratorProvider):
-    url                   = "https://chatforai.store"
-    working               = True
+    url = "https://chatforai.store"
+    working = True
+    supports_message_history = True
     supports_gpt_35_turbo = True
 
     @classmethod

@@ -10,8 +10,8 @@ from .helper import format_prompt
 
 class GPTalk(AsyncGeneratorProvider):
     url = "https://gptalk.net"
-    supports_gpt_35_turbo = True
     working = True
+    supports_gpt_35_turbo = True
     _auth = None
 
     @classmethod

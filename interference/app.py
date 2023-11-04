@@ -68,13 +68,13 @@ def chat_completions():
     myauth = None
     if model == 'bing':
         model = 'gpt-4'
-        provider = Bing
+        provider = Phind
     elif model == 'bard':
         provider = Bard
         stream = False
     elif model == 'openai':
         model = 'gpt-3.5-turbo-16k'
-        provider = Bing
+        provider = Phind
 
     elif model == 'perplexity':
         model = "concise"

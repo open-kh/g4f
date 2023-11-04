@@ -13,7 +13,7 @@ class FakeGpt(AsyncGeneratorProvider):
     supports_gpt_35_turbo = True
     working               = True
     _access_token         = None
-    _cookie_jar            = None
+    _cookie_jar           = None
 
     @classmethod
     async def create_async_generator(
