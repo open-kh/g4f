@@ -10,6 +10,8 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
+RUN pip install -r interference/requirements.txt
+
 CMD [ "python", "-m" , "interference.appImg"]
 # CMD [ "python", "-m" , "interference.app"]
 # CMD [ "python", "-m" , "interference.appFalcon40"]
