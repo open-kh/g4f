@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from urllib import response
-from perplexity import Perplexity
+from .perplexity import Perplexity
 
 import random, string
 

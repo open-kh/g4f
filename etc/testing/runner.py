@@ -1,17 +1,16 @@
 import json
 from pydoc import doc
 from g4f import ChatCompletion, models, Provider
-from perplexity import Perplexity
 import time
-# from ...g4f.Provider.perplexity import Perplexity
+from g4f.Provider.perplexity import Perplexity
 
 ai = Perplexity()
 
-question = "Are you good with coding"
+question = "Hello, Who are you"
 
-doct = ""
-docs = []
 def perplex():
+    doct = ""
+    docs = []
     for res in ai.search(question):
         response = eval(f"{res}")
         text = ""
