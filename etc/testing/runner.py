@@ -6,7 +6,7 @@ from g4f.Provider.perplexity import Perplexity
 
 ai = Perplexity()
 
-question = "Hello, Who are you"
+question = "Who are you"
 
 def perplex():
     doct = ""
@@ -42,4 +42,4 @@ def runner():
         print(response, end="", flush=True)
         time.sleep(0.1)
 
-runner()
+perplex()
