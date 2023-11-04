@@ -32,8 +32,8 @@ def perplex():
 
 def runner():
     for response in ChatCompletion.create(
-            model=['concise','gpt-4','gpt-3.5-turbo','perplexity'][2],
-            provider= Provider.Phind,
+            model=['concise','gpt-4','gpt-3.5-turbo','perplexity'][0],
+            provider= Provider.PerplexityAI,
             messages=[{"role": "user", "content": question}],
             temperature=0.1,
             auth=True,
@@ -42,4 +42,5 @@ def runner():
         print(response, end="", flush=True)
         time.sleep(0.1)
 
-perplex()
+# perplex()
+runner()

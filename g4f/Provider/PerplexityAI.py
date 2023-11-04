@@ -24,7 +24,8 @@ class PerplexityAI(AsyncGeneratorProvider):
         perplex = Perplexity()
         # chars = string.ascii_lowercase + string.digits
         # user_id = ''.join(random.choice(chars) for _ in range(24))
-        doct, text = ""
+        doct = "" 
+        text = ""
         for line in perplex.search(format_prompt(messages), mode = model, search_focus=search_focus): # type: ignore
             text = cls.check_answer(line)
             yield text[len(doct):] # type: ignore
