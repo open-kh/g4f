@@ -1,5 +1,5 @@
-# python3 -m interference.app
-python3 -m etc.testing.runner
+python3 -m interference.app
+# python3 -m etc.testing.runner
 
 # COUNT=5
 # PORT=1337

@@ -8,8 +8,6 @@ import random, string
 from ..typing import AsyncResult, Messages
 from .base_provider import AsyncGeneratorProvider, format_prompt
 
-perplex = Perplexity()
-
 class PerplexityAI(AsyncGeneratorProvider):
     working = True
     count_check = 0
@@ -23,16 +21,16 @@ class PerplexityAI(AsyncGeneratorProvider):
         timeout: int = 120,
         **kwargs
     ) -> AsyncResult:
+        perplex = Perplexity()
         # chars = string.ascii_lowercase + string.digits
         # user_id = ''.join(random.choice(chars) for _ in range(24))
-        doct = ""
+        doct, text = ""
         for line in perplex.search(format_prompt(messages), mode = model, search_focus=search_focus): # type: ignore
             text = cls.check_answer(line)
-            yield text[len(doct):]
+            yield text[len(doct):] # type: ignore
             doct = text
 
         perplex.close()
-        # print(json.dumps(data))
 
 
     @classmethod
@@ -44,7 +42,7 @@ class PerplexityAI(AsyncGeneratorProvider):
             elif 'chunks' in response:
                 text = "".join(response['chunks'])
             elif 'text' in response:
-                response["answer"] = json.decoder(response['text'])
+                response["answer"] = json.dumps(response['text'],separators=(',', ':'))
                 cls.check_answer(response)
 
             return text

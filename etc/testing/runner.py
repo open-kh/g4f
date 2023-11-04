@@ -7,54 +7,39 @@ import time
 
 ai = Perplexity()
 
-question = "Do you have boyfriend with girlfriend together"
+question = "Are you good with coding"
 
-# doct = ""
-# docs = []
-# for res in ai.search(question):
-#     response = eval(f"{res}")
-#     text = ""
-#     if ('text' in response) and ('answer' not in response):
-#         response["answer"] = response['text']
-#         docs.append(response["answer"])
+doct = ""
+docs = []
+def perplex():
+    for res in ai.search(question):
+        response = eval(f"{res}")
+        text = ""
+        if ('text' in response) and ('answer' not in response):
+            response["answer"] = response['text']
 
-#     if 'answer' in response:
-#         text = response['answer']
-#         docs.append(text)
-#     elif 'chunks' in response:
-#         text = "".join(response['chunks'])
-#         docs.append(text)
-#     else:
-#         break
-#         docs.append(response)
-#         # print(response)
-#         print(docs)
+        if 'answer' in response:
+            text = response['answer']
+        elif 'chunks' in response:
+            text = "".join(response['chunks'])
+        else:
+            docs.append(response)
 
-#     print(text[len(doct):])
-#     doct = text
+        print(text[len(doct):])
+        doct = text
+        
+    print(docs)
+    ai.close()
 
+def runner():
+    for response in ChatCompletion.create(
+            model=['concise','gpt-4','gpt-3.5-turbo','perplexity'][1],
+            provider= Provider.Bing,
+            messages=[{"role": "user", "content": question}],
+            temperature=0.1,
+            stream=True
+        ):
+        print(response, end="", flush=True)
+        time.sleep(0.1)
 
-for response in ChatCompletion.create(
-                                model='concise',
-                                provider= Provider.PerplexityAI,
-                                messages=[{"role": "user", "content": question}],
-                                temperature=0.1,
-                                stream=True
-                            ):
-    # doc_len = len(doc["chunks"])
-    # content = "".join(doc["chunks"][-(doc_len-count):] if doc_len > count else doc["chunks"])
-    print(response, end="", flush=True)
-    # count = doc_len
-    time.sleep(0.1)
-
-    # if doc["status"] is "completed":
-    #     data = {
-    #         "status": doc.status,
-    #         "uuid": doc.uuid,
-    #         "media_items": doc.media_items,
-    #         "query_str": doc.query_str,
-    #     }
-    #     print(json.dumps(a, separators=(',', ':')))
-# print(json.dumps(doct))
-ai.close()
-# perplexity.close()
+runner()

@@ -120,7 +120,7 @@ class ProviderUtils:
         'AsyncProvider': AsyncProvider,
         'AsyncGeneratorProvider': AsyncGeneratorProvider,
         'RetryProvider': RetryProvider,
-    }
+    } # type: ignore
 
 __all__ = [
     'PerplexityAI',
