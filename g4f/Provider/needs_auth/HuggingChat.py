@@ -13,8 +13,8 @@ class HuggingChat(AsyncGeneratorProvider):
     url = "https://huggingface.co/chat"
     needs_auth = True
     working = True
-    model = "tiiuae/falcon-180B-chat"
-    # model = "meta-llama/Llama-2-70b-chat-hf"
+    # model = "tiiuae/falcon-180B-chat"
+    model = "meta-llama/Llama-2-70b-chat-hf"
     # model = "meta-llama/Llama-2-70b-chat-hf"
 
     @classmethod

@@ -33,7 +33,7 @@ def perplex():
 def runner():
     for response in ChatCompletion.create(
             model=['concise','gpt-4','gpt-3.5-turbo','perplexity'][0],
-            provider= Provider.PerplexityAI,
+            provider= Provider.HuggingChat,
             messages=[{"role": "user", "content": question}],
             temperature=0.1,
             auth=True,
