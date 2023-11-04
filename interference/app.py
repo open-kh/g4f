@@ -87,8 +87,8 @@ def chat_completions():
         path_file = "./cookie.json"
         with open(path_file, "r",encoding='utf-8') as f:
             cookies = json.load(f)
+        model = models.default
 
-        model = "meta-llama/Llama-2-70b-chat-hf"
         myauth = '&#39'
     else:
         provider = None
