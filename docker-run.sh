@@ -5,7 +5,7 @@ docker stop $(docker ps -a -q) #stop container
 docker rm -f $(docker ps -a -q) # remove container
 docker system prune -a # remove all container and image
 
-docker volume create gpt4_data
+# docker volume create gpt4_data
 # GPT="gpt4"
 docker image build -t gpt4:tag . #5000
 # docker image build -t gpt4img:tag -f Dockerfile1 . #1337
@@ -17,7 +17,8 @@ COUNT=6
 PORT=1337
 for i in $(seq 1 $COUNT)
 do
-    docker run -d -p ${PORT}:1337 -v gpt4_data:/out gpt4:tag
+    # docker run -d -p ${PORT}:1337 -v gpt4_data:/out gpt4:tag
+    docker run -d -p ${PORT}:1337 -v ~/out:/out gpt4:tag
     PORT=$((PORT+1))
 done
 
