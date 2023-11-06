@@ -6,8 +6,6 @@ certifi
 browser_cookie3
 websockets
 js2py
-flask[async]
-flask-cors
 typing-extensions
 PyExecJS
 duckduckgo-search
@@ -22,3 +20,5 @@ numpy
 replicate
 websocket-client
 asgiref
+fastapi
+uvicorn
