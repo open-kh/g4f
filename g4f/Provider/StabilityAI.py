@@ -73,7 +73,7 @@ class StabilityAI:
                 "is_training": False
             })
             response = requests.request("POST", url, headers=self.headers, data=payload, timeout=1000)
-            print(json.dumps(response))
+            # print(json.dumps(response))
             response.raise_for_status()
 
             json_response = response.json()
