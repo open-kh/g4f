@@ -13,6 +13,8 @@ import uuid
 import urllib.parse
 from PIL import Image
 from aiohttp        import ClientSession, ClientTimeout
+
+from g4f.requests import random_IP
 from ..typing       import AsyncResult, Messages
 from .base_provider import AsyncGeneratorProvider
 
@@ -132,6 +134,7 @@ async def create_conversation(session: ClientSession, tone: str, image: str = No
                 headers["content-type"] = f'multipart/form-data; boundary={boundary}'
                 headers["referer"] = 'https://www.bing.com/search?q=Bing+AI&showconv=1&FORM=hpcodx'
                 headers["origin"] = 'https://www.bing.com'
+                headers['X-Forwarded-For'] = random_IP()
                 async with session.post("https://www.bing.com/images/kblob", data=data, headers=headers, proxy=proxy) as image_upload_response:
                     if image_upload_response.status != 200:
                         raise Exception("Failed to upload image.")

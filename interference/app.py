@@ -168,7 +168,7 @@ def image_generate_temp():
     if barer != f"pk-{public_key}":
         return Response(response='Unauthorized', status=401)
 
-    out = ai.image_generate(prompt=f"{text}, cinematic, dramatic", count=count)
+    out = ai.image_generate(prompt=f"{text}, cinematic, dramatic", count=(count if count <= 4 else 4))
 
     completion_data = "Sorry, I am running out off memory!"
 

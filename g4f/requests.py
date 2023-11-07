@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import warnings
 import json
+import random
 import asyncio
 from functools import partialmethod
 from asyncio import Future, Queue
 from typing import AsyncGenerator, Union, Optional
+
+from flask import request
 
 from curl_cffi.requests import AsyncSession, Response
 import curl_cffi
@@ -14,6 +17,8 @@ is_newer_0_5_8: bool = hasattr(AsyncSession, "_set_cookies") or hasattr(curl_cff
 is_newer_0_5_9: bool = hasattr(curl_cffi.AsyncCurl, "remove_handle")
 is_newer_0_5_10: bool = hasattr(AsyncSession, "release_curl")
 
+def random_IP():
+    return f"13.{random.randint(104, 107)}.{random.randint(0, 255)}.{random.randint(0, 255)}"
 
 class StreamResponse:
     def __init__(self, inner: Response, queue: Queue[bytes]) -> None:

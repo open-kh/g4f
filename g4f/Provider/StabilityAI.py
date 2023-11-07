@@ -5,6 +5,8 @@ import os
 import json
 import string
 
+from g4f.requests import random_IP
+
 sdxl_version=[
     # "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
     # "d830ba5dabf8090ec0db6c10fc862c6eb1c929e1a194a5411852d25fd954ac82"
@@ -50,8 +52,7 @@ class StabilityAI:
             proxies = ['https://openkh.org', 'https://api.openkh.org']
             self.ver = random.choice(sdxl_version)
             self.headers['User-Agent'] = random.choice(user_agent)
-            random_ip = self._random_ip()
-            self.headers['x-forwarded-for'] = random_ip
+            self.headers['X-Forwarded-For'] = random_IP()
             url = 'https://replicate.com/api/predictions'
             payload = json.dumps({
                 "version": self.ver,
