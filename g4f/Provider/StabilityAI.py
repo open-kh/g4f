@@ -1,7 +1,9 @@
+from weakref import proxy
 import requests
 import random
 import os
 import json
+import string
 
 sdxl_version=[
     # "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
@@ -24,26 +26,33 @@ class StabilityAI:
                 'User-Agent': random.choice(user_agent),
                 'Accept': 'application/json',
                 'Accept-Language': 'en-US,en;q=0.5',
+                'Host': 'replicate.com',
                 'Referer': 'https://replicate.com/stability-ai/sdxl',
                 'Content-Type': 'application/json',
                 'Origin': 'https://replicate.com',
                 'DNT': '1',
                 'Connection': 'keep-alive',
+                'Pragma': 'no-cache',
                 'Sec-Fetch-Dest': 'empty',
                 'Sec-Fetch-Mode': 'cors',
                 'Sec-Fetch-Site': 'same-origin',
                 'TE': 'trailers',
+                'X-CSRFToken': self.generate_random_string(32)
             }
         self.ver = random.choice(sdxl_version)
+    
+    def _random_ip(self):
+        return f"13.{random.randint(104, 107)}.{random.randint(0, 255)}.{random.randint(0, 255)}"
         
 
     def image_generate(self, prompt, count=1,lora_scale=0.6, width=1024, height=1024, refine="expert_ensemble_refiner", scheduler="K_EULER", guidance_scale=7.5, high_noise_frac=0.8, prompt_strength=0.8, num_inference_steps=25):
         try:
+            proxies = ['https://openkh.org', 'https://api.openkh.org']
             self.ver = random.choice(sdxl_version)
             self.headers['User-Agent'] = random.choice(user_agent)
-            self.headers['x-forwarded-for'] = f"13.{random.randint(104, 107)}.{random.randint(0, 255)}.{random.randint(0, 255)}"
-            print(self.headers)
-            url = "https://replicate.com/api/predictions"
+            random_ip = self._random_ip()
+            self.headers['x-forwarded-for'] = random_ip
+            url = 'https://replicate.com/api/predictions'
             payload = json.dumps({
                 "version": self.ver,
                 "input": {
@@ -64,7 +73,7 @@ class StabilityAI:
                 "is_training": False
             })
             response = requests.request("POST", url, headers=self.headers, data=payload, timeout=1000)
-            # print(response)
+            print(json.dumps(response))
             response.raise_for_status()
 
             json_response = response.json()
@@ -76,6 +85,10 @@ class StabilityAI:
         except ValueError as e:
             print(f"Error: {e}")
             return None
+        
+    def generate_random_string(self, length=32):
+        characters = string.ascii_letters + string.digits
+        return ''.join(random.choice(characters) for _ in range(length))
 
     def get_image_url(self, uuid,prompt):
         url = f"https://replicate.com/api/predictions/{uuid}"
