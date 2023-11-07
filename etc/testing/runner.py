@@ -34,9 +34,10 @@ def runner():
     path_file = "./cookie.json"
     with open(path_file, "r",encoding='utf-8') as f:
         cookies = json.load(f)
+        
     for response in ChatCompletion.create(
-            model=['concise','gpt-4','gpt-3.5-turbo','perplexity'][0],
-            provider= Provider.HuggingChat,
+            model=['concise','gpt-4','gpt-3.5-turbo','perplexity'][1],
+            provider= Provider.Bing,
             messages=[{"role": "user", "content": question}],
             temperature=0.1,
             auth=True,

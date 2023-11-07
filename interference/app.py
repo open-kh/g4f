@@ -9,6 +9,7 @@ from urllib.request import urlretrieve
 from flask        import Flask, request, Response, send_file
 from flask_cors   import CORS
 from g4f          import ChatCompletion, models
+import g4f
 from g4f.Provider import (
     Bard,
     PerplexityAI,
@@ -16,7 +17,6 @@ from g4f.Provider import (
     Bing,
     HuggingChat,
     Llama2,
-    StabilityAI,
 )
 
 app = Flask(__name__)
@@ -74,13 +74,13 @@ def chat_completions():
 
     if model == 'bing':
         model = 'gpt-4'
-        provider = Phind
+        provider = Bing
     elif model == 'bard':
         provider = Bard
         stream = False
     elif model == 'openai':
         model = 'gpt-3.5-turbo-16k'
-        provider = Phind
+        provider = Bing or Phind
 
     elif model == 'perplexity':
         model = "concise"
@@ -151,9 +151,14 @@ def chat_completions():
 
 @app.route("/chat/image_generation", methods=['POST'])
 def image_generate_temp():
-    ai = StabilityAI()
-    text = request.json.get('text')
+    ai = g4f.Provider.StabilityAI()
     barer = request.headers.get('Authorization')
+
+    if request.json is not None:
+        text = request.json.get('text')
+    else:
+        return Response(response='Unknow request', status=404)
+
     if barer is None:
         barer = 'unknown'
     else:
@@ -163,19 +168,22 @@ def image_generate_temp():
         return Response(response='Unauthorized', status=401)
 
     out = ai.image_generate(prompt=f"{text}, cinematic, dramatic")
-    images = []
-    for img in out['images']:
-        imgID = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
-        imgName = f"txt2img_{imgID}.png"
-        urlImg = f"https://{request.host}/images/{imgName}"
-        urlretrieve(img, f"./out/{imgName}")
-        # size = "{height=270px width=270px}" 
-        # if len(out['images'])>=2 else ""
-        images.append(f"[![{out['prompt']}]({urlImg})]({urlImg})")
 
-    token = "\n".join(images)
+    completion_data = "Sorry, I am running out off memory!"
 
-    completion_data = f"Sure, Here is the image:\n{token}\nDid you like it?"
+    if out is not None and 'images' in out:
+        images = []
+        for img in out['images']:
+            imgID = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
+            imgName = f"txt2img_{imgID}.png"
+            urlImg = f"https://{request.host}/images/{imgName}"
+            urlretrieve(img, f"./out/{imgName}")
+            # size = "{height=270px width=270px}" 
+            # if len(out['images'])>=2 else ""
+            images.append(f"[![{out['prompt']}]({urlImg})]({urlImg})")
+
+        token = "\n".join(images)
+        completion_data = f"Sure, Here is the image:\n{token}\nDid you like it?"
 
     return Response(completion_data, content_type='application/json')
 
