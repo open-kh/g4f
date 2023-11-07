@@ -42,6 +42,7 @@ class StabilityAI:
             self.ver = random.choice(sdxl_version)
             self.headers['User-Agent'] = random.choice(user_agent)
             self.headers['x-forwarded-for'] = f"13.{random.randint(104, 107)}.{random.randint(0, 255)}.{random.randint(0, 255)}"
+            print(self.headers)
             url = "https://replicate.com/api/predictions"
             payload = json.dumps({
                 "version": self.ver,
