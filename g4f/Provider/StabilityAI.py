@@ -5,7 +5,10 @@ import json
 
 sdxl_version=[
     # "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
-    "c221b2b8ef527988fb59bf24a8b97c4561f1c671f73bd389f866bfb27c061316"
+    # "d830ba5dabf8090ec0db6c10fc862c6eb1c929e1a194a5411852d25fd954ac82"
+    # "c221b2b8ef527988fb59bf24a8b97c4561f1c671f73bd389f866bfb27c061316",
+    # "2a865c9a94c9992b6689365b75db2d678d5022505ed3f63a5f53929a31a46947",
+    "39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b"
 ]
 
 user_agent = [
@@ -58,6 +61,7 @@ class StabilityAI:
                 "is_training": False
             })
             response = requests.request("POST", url, headers=self.headers, data=payload, timeout=1000)
+            # print(response)
             response.raise_for_status()
 
             json_response = response.json()
