@@ -40,6 +40,7 @@ class StabilityAI:
     def image_generate(self, prompt, count=1,lora_scale=0.6, width=1024, height=1024, refine="expert_ensemble_refiner", scheduler="K_EULER", guidance_scale=7.5, high_noise_frac=0.8, prompt_strength=0.8, num_inference_steps=25):
         try:
             self.ver = random.choice(sdxl_version)
+            print(self.ver)
             url = "https://replicate.com/api/predictions"
             payload = json.dumps({
                 "version": self.ver,

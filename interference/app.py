@@ -154,8 +154,9 @@ def image_generate_temp():
     ai = g4f.Provider.StabilityAI()
     barer = request.headers.get('Authorization')
 
+    count = request.get_json().get('count', 1)
     if request.json is not None:
-        text = request.json.get('text')
+        text = request.get_json().get('text')
     else:
         return Response(response='Unknow request', status=404)
 
@@ -167,23 +168,26 @@ def image_generate_temp():
     if barer != f"pk-{public_key}":
         return Response(response='Unauthorized', status=401)
 
-    out = ai.image_generate(prompt=f"{text}, cinematic, dramatic")
+    out = ai.image_generate(prompt=f"{text}, cinematic, dramatic", count=count)
 
     completion_data = "Sorry, I am running out off memory!"
 
     if out is not None and 'images' in out:
-        images = []
-        for img in out['images']:
+        images = out['images']
+        image_tags = []
+        for img in images:
             imgID = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
             imgName = f"txt2img_{imgID}.png"
             urlImg = f"https://{request.host}/images/{imgName}"
             urlretrieve(img, f"./out/{imgName}")
-            # size = "{height=270px width=270px}" 
-            # if len(out['images'])>=2 else ""
-            images.append(f"[![{out['prompt']}]({urlImg})]({urlImg})")
+            image_tags.append(f'<a href="{urlImg}"><img src="{urlImg}" alt="{out["prompt"]}" style="width:100%"></a>')
 
-        token = "\n".join(images)
-        completion_data = f"Sure, Here is the image:\n{token}\nDid you like it?"
+        if len(image_tags) == 1:
+            completion_data = f"Sure, Here is the image:\n{image_tags[0]}\nDid you like it?"
+        else:
+            image_tags_str = ''.join(f'<div>{tag}</div>' for tag in image_tags)
+            grid_html = f'<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 5px;">{image_tags_str}</div>'
+            completion_data = f"Sure, Here are the images:\n{grid_html}\nDid you like them?"
 
     return Response(completion_data, content_type='application/json')
 
