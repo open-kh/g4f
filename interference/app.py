@@ -178,16 +178,16 @@ def image_generate_temp():
         for img in images:
             imgID = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
             imgName = f"txt2img_{imgID}.png"
-            urlImg = f"https://{request.host}/images/{imgName}"
+            urlImg = f"https://api.openkh.org/images/{imgName}"
+            # urlImg = f"https://{request.host}/images/{imgName}"
             urlretrieve(img, f"./out/{imgName}")
-            image_tags.append(f'<a href="{urlImg}"><img src="{urlImg}" alt="Image Generate" style="width:100%"></a>')
+            image_tags.append(f"[![Image generate]({urlImg})]({urlImg})")
 
         if len(image_tags) == 1:
-            completion_data = f"Sure, Here is the image:\n{image_tags[0]}\nDid you like it?"
+            completion_data = f"Sure, Here is the image:\n{image_tags[0]}\nDid you like it? 😊"
         else:
-            image_tags_str = ''.join(f'<div>{tag}</div>' for tag in image_tags)
-            grid_html = f'<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 5px;">{image_tags_str}</div>'
-            completion_data = f"Sure, Here are the images:\n{grid_html}\nDid you like them?"
+            image_tags_str = "\n".join(image_tags)
+            completion_data = f"Sure, Here are the images:\n{image_tags_str}\nDid you like them?"
 
     return Response(completion_data, content_type='application/json')
 
@@ -197,7 +197,7 @@ def send_static_file(path):
     return send_file(f"/out/{path}")
 
 def main():
-    app.run(host='0.0.0.0', port=1337, debug=True)
+    app.run(host='0.0.0.0', port=1335, debug=True)
 
 if __name__ == '__main__':
     main()
