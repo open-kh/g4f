@@ -180,7 +180,7 @@ def image_generate_temp():
             imgName = f"txt2img_{imgID}.png"
             urlImg = f"https://{request.host}/images/{imgName}"
             urlretrieve(img, f"./out/{imgName}")
-            image_tags.append(f'<a href="{urlImg}"><img src="{urlImg}" alt="{out["prompt"]}" style="width:100%"></a>')
+            image_tags.append(f'<a href="{urlImg}"><img src="{urlImg}" alt="Image Generate" style="width:100%"></a>')
 
         if len(image_tags) == 1:
             completion_data = f"Sure, Here is the image:\n{image_tags[0]}\nDid you like it?"
