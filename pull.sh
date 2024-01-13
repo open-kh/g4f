@@ -1,2 +1,2 @@
-git pull origin g4f
+git pull origin stable
 sh docker-run.sh
