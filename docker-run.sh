@@ -18,7 +18,7 @@ PORT=1337
 for i in $(seq 1 $COUNT)
 do
     # docker run -d -p ${PORT}:1337 -v gpt4_data:/out gpt4:tag
-    docker run -d -p ${PORT}:1337 \
+    docker run --name gpt4-${i} -d -p ${PORT}:1337 \
         -v ~/out:/out \
         gpt4:tag
 
@@ -28,5 +28,5 @@ done
 # docker run -d -p 1333:1333 gpt4img:tag
 # docker run -d -p 1342:1333 ${GPT}:tag
 
-sh docker-reload.sh
+# sh docker-reload.sh
 # docker ps -al
