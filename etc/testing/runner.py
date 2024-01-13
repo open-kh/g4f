@@ -1,51 +1,41 @@
+from abc import get_cache_token
 import json
 from pydoc import doc
+import random
+from arrow import get
+
+from sqlalchemy import Null
 from g4f import ChatCompletion, models, Provider
 import time
-from g4f.Provider.perplexity import Perplexity
+from g4f.Provider import (ClaudeAI)
+from g4f.Provider.helper import get_cookies
 
-ai = Perplexity()
+question = "Hello, who are you"
 
-question = "Who are you"
+# path_file = "access_token_claude.txt"
+cookies = open("access_token_claude.txt", "r").read()
+# cookies = get_cookies('claude.ai')
 
-def perplex():
-    doct = ""
-    docs = []
-    for res in ai.search(question):
-        response = eval(f"{res}")
-        text = ""
-        if ('text' in response) and ('answer' not in response):
-            response["answer"] = response['text']
+# print(cookies)
+# with open(path_file, "r") as f:
 
-        if 'answer' in response:
-            text = response['answer']
-        elif 'chunks' in response:
-            text = "".join(response['chunks'])
-        else:
-            docs.append(response)
+ai = ClaudeAI(cookies)
 
-        print(text[len(doct):])
-        doct = text
-        
-    print(docs)
-    ai.close()
-
+ids = []
 def runner():
-    path_file = "./cookie.json"
-    with open(path_file, "r",encoding='utf-8') as f:
-        cookies = json.load(f)
-        
-    for response in ChatCompletion.create(
-            model=['concise','gpt-4','gpt-3.5-turbo','perplexity'][1],
-            provider= Provider.Bing,
-            messages=[{"role": "user", "content": question}],
-            temperature=0.1,
-            auth=True,
-            stream=True,
-            cookies = cookies,
-        ):
-        print(response, end="", flush=True)
-        time.sleep(0.1)
+    conversations = ai.list_all_conversations()
+    for conversation in conversations:
+        ids.append(conversation['uuid'])
 
+def chat():
+    if len(ids) == 0:
+        runner()
+    chat_id = "a438087b-9039-4330-9fce-bb02fd039c11"
+    # chat_id = random.choices(ids)[0]
+    # print(chat_id)
+    # response = ai.create_new_chat()
+    response = ai.send_message(question,chat_id)
+    print(response)
 # perplex()
-runner()
+# runner()
+chat()

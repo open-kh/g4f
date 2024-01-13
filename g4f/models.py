@@ -1,6 +1,8 @@
 from __future__  import annotations
 from dataclasses import dataclass
 
+from g4f.Provider import perplexity
+
 
 from .typing     import Union
 from .Provider   import BaseProvider, RetryProvider
@@ -70,6 +72,12 @@ concise = Model(
     name          = "concise",
     base_provider = 'perplexity',
     best_provider = PerplexityAI)
+
+perplexity_llama2_70b = Model(
+    name          = "llama-2-70b-chat",
+    base_provider = 'perplexity',
+    best_provider = PerplexityAI
+)
 
 # GPT-3.5 / GPT-4
 gpt_35_turbo = Model(

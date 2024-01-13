@@ -1,6 +1,8 @@
 
 import random
 from urllib.request import urlretrieve
+
+# from sdxl import ImageGenerator
 from g4f.Provider import (StabilityAI)
 
 ai = StabilityAI()
@@ -9,6 +11,10 @@ question = "Kirigami illustration on delicate paper with slight wear: Intricate 
 
 out = ai.image_generate(prompt=f"{question}, cinematic, dramatic", count=2)
 completion_data = "Sorry, I am running out off memory!"
+
+imgID = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=28))
+imgName = f"txt2img_{imgID}.png"
+urlImg = f"https://localhost/images/{imgName}"
 
 if out is not None and 'images' in out:
     images = out['images']

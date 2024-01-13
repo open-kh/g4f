@@ -22,3 +22,4 @@ websocket-client
 asgiref
 fastapi
 uvicorn
+requests-ip-rotator==1.0.14

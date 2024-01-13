@@ -1,5 +1,4 @@
 from os import listdir
-from traceback import print_tb
 from uuid import uuid4
 from time import sleep, time
 from threading import Thread
@@ -8,54 +7,36 @@ from random import getrandbits
 from websocket import WebSocketApp
 from requests import Session, get, post
 
-class Labs:
-    def __init__(self) -> None:
-        self._startSocket()
-        while not (self.ws.sock and self.ws.sock.connected):
-            sleep(0.01)
+app_url = "seallms-seallm-chat-13b.hf.space"
 
-    def _startSocket(self):
+header = {
+    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0',
+    'Accept': 'application/json',
+    'Referer': f'https://{app_url}',
+    'Origin': f'http://{app_url}',
+    'Host': f'{app_url}',
+    'TE': 'trailers',
+    'Accept-Encoding': 'gzip,deflate,br',
+    'Accept': '*/*'
+}
+
+class WebSocket:
+
+    def __init__(self) -> None:
+        self.app_url = app_url
         self.history: list = []
         self.session: Session = Session()
-        self.user_agent: dict = { "User-Agent": "Ask/2.2.1/334 (iOS; iPhone) isiOSOnMac/false", "X-Client-Name": "Perplexity-iOS" }
+        self.user_agent: dict = header
         self.session.headers.update(self.user_agent)
-        self._init_session_without_login()
-
-        self.t: str = self._get_t()
-        self.sid: str = self._get_sid()
     
         self.queue: list = []
         self.finished: bool = True
-        assert self._ask_anonymous_user(), "failed to ask anonymous user"
+
         self.ws: WebSocketApp = self._init_websocket()
         self.ws_thread: Thread = Thread(target=self.ws.run_forever).start()
 
-        self._auth_session()
-
-    def _init_session_without_login(self) -> None:
-        # self.session.get(url=f"https://www.perplexity.ai/search/{str(uuid4())}")
-        self.session.get(url="https://labs.perplexity.ai")
-        # print(self.user_agent)
-        self.session.headers.update(self.user_agent)
-    
-    def _auth_session(self) -> None:
-        self.session.get(url="https://www.perplexity.ai/api/auth/session")
-
-    def _get_t(self) -> str:
-        return format(getrandbits(32), "08x")
-
-    def _get_sid(self) -> str:
-        return loads(self.session.get(
-            url=f"https://labs-api.perplexity.ai/socket.io/?transport=polling&EIO=4"
-        ).text[1:])["sid"]
-
-    def _ask_anonymous_user(self) -> bool:
-        response = self.session.post(
-            url=f"https://labs-api.perplexity.ai/socket.io/?EIO=4&transport=polling&t={self.t}&sid={self.sid}",
-            data="40{\"jwt\":\"anonymous-ask-user\"}"
-        ).text
-
-        return response == "OK"
+        while not (self.ws.sock and self.ws.sock.connected):
+            sleep(0.01)
 
     def _get_cookies_str(self) -> str:
         cookies = ""
@@ -67,32 +48,25 @@ class Labs:
         def on_open(ws: WebSocketApp) -> None:
             ws.send("2probe")
             ws.send("5")
-            
-        format_chat = {
-            "answer": "Hello, world",
-            'status': 'completed',
-            'mode': 'concise',
-        }
 
         def on_message(ws: WebSocketApp, message: str) -> None:
             if message == "2":
                 ws.send("3")
             elif message.startswith("42"):
-                content = loads(message[2:])
-                text = content[1]
-                if text["final"] == True:
+                message = loads(message[2:])[1]
+                if "status" not in message:
+                    self.queue.append(message)
+                elif message["status"] == "completed":
                     self.finished = True
-                    self.history.append({"role": "assistant", "content": text['output'], "priority": 0})
-                elif ("output" in text) and (text["final"] == False):
-                    format_chat["answer"] = text['output']
-                    format_chat["status"] = "failed"
-                    self.queue.append(format_chat)
+                    self.history.append({"role": "assistant", "content": message["output"], "priority": 0})
+                elif message["status"] == "failed":
+                    self.finished = True
 
         headers: dict = self.user_agent
         headers["Cookie"] = self._get_cookies_str()
 
         return WebSocketApp(
-            url=f"wss://labs-api.perplexity.ai/socket.io/?EIO=4&transport=websocket&sid={self.sid}",
+            url=f"wss://{self.app_url}/queue/join",
             header=headers,
             on_open=on_open,
             on_message=on_message,
@@ -100,14 +74,10 @@ class Labs:
         )
     
     def _c(self, prompt: str, model: str) -> dict:
-        while not (self.ws.sock and self.ws.sock.connected):
-            self._startSocket()
-            
         assert self.finished, "already searching"
         assert model in ["codellama-34b-instruct", "llama-2-13b-chat", "llama-2-70b-chat", "mistral-7b-instruct", "pplx-7b-chat-alpha", "pplx-70b-chat-alpha"]
         self.finished = False
         self.history.append({"role": "user", "content": prompt, "priority": 0})
-        # self.history
         self.ws.send("42[\"perplexity_playground\",{\"version\":\"2.1\",\"source\":\"default\",\"model\":\"" + model + "\",\"messages\":" + dumps(self.history) + "}]")
     
     def chat(self, prompt: str, model: str = "mistral-7b-instruct") -> dict:
@@ -119,6 +89,7 @@ class Labs:
 
     def chat_sync(self, prompt: str, model: str = "llama-2-7b-chat") -> dict:
         self._c(prompt, model)
+
         while not self.finished:
             pass
 

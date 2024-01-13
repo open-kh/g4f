@@ -38,6 +38,9 @@ from .You             import You
 from .Yqcloud         import Yqcloud
 from .GeekGpt         import GeekGpt
 from .StabilityAI     import StabilityAI
+from .SDXL            import SDXL
+from .ClaudeAI        import ClaudeAI
+from .PerplexityAILabs   import PerplexityAILabs
 from .PerplexityAI   import PerplexityAI
 from .Edge           import Edge
 
@@ -51,7 +54,9 @@ from .unfinished     import *
 class ProviderUtils:
     convert: dict[str, BaseProvider] = {
         'Edge': Edge,
+        'SDXL': SDXL,
         'StabilityAI': StabilityAI,
+        'PerplexityAILabs': PerplexityAILabs,
         'PerplexityAI': PerplexityAI,
         'AItianhu': AItianhu,
         'AItianhuSpace': AItianhuSpace,
@@ -62,10 +67,7 @@ class ProviderUtils:
         'Aichat': Aichat,
         'Ails': Ails,
         'Aivvm': Aivvm,
-        'AsyncGeneratorProvider': AsyncGeneratorProvider,
-        'AsyncProvider': AsyncProvider,
         'Bard': Bard,
-        'BaseProvider': BaseProvider,
         'Bing': Bing,
         'ChatBase': ChatBase,
         'ChatForAi': ChatForAi,
@@ -106,7 +108,6 @@ class ProviderUtils:
         'Opchatgpts': Opchatgpts,
         'OpenAssistant': OpenAssistant,
         'OpenaiChat': OpenaiChat,
-        'PerplexityAi': PerplexityAi,
         'Phind': Phind,
         'Raycast': Raycast,
         'Theb': Theb,
@@ -128,6 +129,8 @@ class ProviderUtils:
 
 __all__ = [
     'Edge',
+    'ClaudeAI',
+    'SDXL',
     'PerplexityAI',
     'StabilityAI',
     'BaseProvider',

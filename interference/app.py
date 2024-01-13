@@ -87,11 +87,8 @@ def chat_completions():
         provider = PerplexityAI
 
     elif model == 'meta':
-        provider = HuggingChat
-        path_file = "./cookie.json"
-        with open(path_file, "r",encoding='utf-8') as f:
-            cookies = json.load(f)
-        model = models.default
+        provider = PerplexityAI
+        model = models.perplexity_llama2_70b
 
         myauth = '&#39'
     else:

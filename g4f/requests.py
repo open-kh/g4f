@@ -1,24 +1,81 @@
 from __future__ import annotations
 
 import warnings
+import string
 import json
+import socket
+import ipaddress
+import struct
 import random
 import asyncio
 from functools import partialmethod
 from asyncio import Future, Queue
 from typing import AsyncGenerator, Union, Optional
 
-from flask import request
 
-from curl_cffi.requests import AsyncSession, Response
+
+from curl_cffi.requests import AsyncSession, Response, Cookies
 import curl_cffi
+import requests
 
-is_newer_0_5_8: bool = hasattr(AsyncSession, "_set_cookies") or hasattr(curl_cffi.requests.Cookies, "get_cookies_for_curl")
+is_newer_0_5_8: bool = hasattr(AsyncSession, "_set_cookies") or hasattr(Cookies, "get_cookies_for_curl")
 is_newer_0_5_9: bool = hasattr(curl_cffi.AsyncCurl, "remove_handle")
 is_newer_0_5_10: bool = hasattr(AsyncSession, "release_curl")
 
+MAX_IPV4 = ipaddress.IPv4Address._ALL_ONES  # 2 ** 32 - 1
+MAX_IPV6 = ipaddress.IPv6Address._ALL_ONES  # 2 ** 128 - 1
+
+proxies_list = open("rotating_proxies.txt", "r").read().strip().split("\n")
+
+def get(url, proxy): 
+	try: 
+		# Send proxy requests to the final URL 
+		response = requests.get(url, proxies={'http': f"http://{proxy}"}, timeout=30) 
+		print(proxy,response.status_code, response.text) 
+	except Exception as e: 
+		print(e) 
+ 
+def check_proxies(): 
+	proxy = proxies_list[random.randint(0, len(proxies_list) - 1)]
+	get("https://replicate.com", proxy)
+
+def random_ipv4():
+    return  ipaddress.IPv4Address._string_from_ip_int(
+        random.randint(0, MAX_IPV4)
+    )
+
+def random_ipv6():
+    return ipaddress.IPv6Address._string_from_ip_int(
+        random.randint(0, MAX_IPV6)
+    )
+
+def generate_public_ip():
+    socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff)))
+
 def random_IP():
     return f"13.{random.randint(104, 107)}.{random.randint(0, 255)}.{random.randint(0, 255)}"
+
+def random_port():
+    return random.randint(1024, 65535)
+
+def random_url():
+    return f"http://{random_IP()}:{random_port()}"
+
+def random_headers():
+    return {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Cache-Control": "max-age=0",
+    }
+
+
+def generate_random_string(length=32):
+        characters = string.ascii_letters + string.digits
+        return ''.join(random.choice(characters) for _ in range(length))
 
 class StreamResponse:
     def __init__(self, inner: Response, queue: Queue[bytes]) -> None:
@@ -50,14 +107,14 @@ class StreamResponse:
         which is under the License: Apache 2.0
         """
 
-        pending: bytes = None
+        pending: bytes = None # type: ignore
 
         async for chunk in self.iter_content(
             chunk_size=chunk_size, decode_unicode=decode_unicode
         ):
             if pending is not None:
                 chunk = pending + chunk
-            lines = chunk.split(delimiter) if delimiter else chunk.splitlines()
+            lines = chunk.split(delimiter) if delimiter else chunk.splitlines() # type: ignore
             if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:
                 pending = lines.pop()
             else:

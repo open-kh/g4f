@@ -7,11 +7,11 @@ import string
 from g4f.requests import random_IP,proxies_list
 
 sdxl_version=[
-    # "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
+    "2b017d9b67edd2ee1401238df49d75da53c523f36e363881e057f5dc3ed3c5b2",
     # "d830ba5dabf8090ec0db6c10fc862c6eb1c929e1a194a5411852d25fd954ac82"
     # "c221b2b8ef527988fb59bf24a8b97c4561f1c671f73bd389f866bfb27c061316",
     # "2a865c9a94c9992b6689365b75db2d678d5022505ed3f63a5f53929a31a46947",
-    "39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b"
+    # "39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b"
 ]
 
 user_agent = [
@@ -27,7 +27,7 @@ user_agent = [
 proxies_mappings = {str(i): proxy for i, proxy in enumerate(proxies_list)}
 
 
-class StabilityAI:
+class SDXL:
     def __init__(self):
         self.headers = {
                 'User-Agent': random.choice(user_agent),
@@ -54,33 +54,45 @@ class StabilityAI:
 
     def image_generate(self, prompt, count=1,lora_scale=0.6, width=1024, height=1024, refine="expert_ensemble_refiner", scheduler="K_EULER", guidance_scale=7.5, high_noise_frac=0.8, prompt_strength=0.8, num_inference_steps=25):
         try:
-            self.ver = random.choice(sdxl_version)
             self.headers['User-Agent'] = random.choice(user_agent)
             self.headers['X-Forwarded-For'] = random_IP()
             self.headers['X-CSRFToken'] =  self.generate_random_string(32)
-            # self.headers['Referer'] = f"https://replicate.com/stability-ai/sdxl/{self.ver}/prediction={self.headers['X-CSRFToken']}"
-            url = 'https://replicate.com/api/predictions'
+            url = f"https://replicate.com/api/models/stability-ai/sdxl/versions/{self.ver}/predictions"
+            # payload = json.dumps({
+            #     "version": self.ver,
+            #     "input": {
+            #         "width": width,
+            #         "height": height,
+            #         "prompt": prompt,
+            #         "refine": refine,
+            #         "scheduler": scheduler,
+            #         "lora_scale": lora_scale,
+            #         "num_outputs": count,
+            #         "guidance_scale": guidance_scale,
+            #         "apply_watermark": False,
+            #         "high_noise_frac": high_noise_frac,
+            #         "negative_prompt": "",
+            #         "prompt_strength": prompt_strength,
+            #         "num_inference_steps": num_inference_steps
+            #     },
+            #     "is_training": False
+            # })
             payload = json.dumps({
-                "version": self.ver,
-                "input": {
+                "inputs": {
                     "width": width,
                     "height": height,
                     "prompt": prompt,
                     "refine": refine,
                     "scheduler": scheduler,
-                    "lora_scale": lora_scale,
                     "num_outputs": count,
                     "guidance_scale": guidance_scale,
-                    "apply_watermark": False,
                     "high_noise_frac": high_noise_frac,
-                    "negative_prompt": "",
                     "prompt_strength": prompt_strength,
                     "num_inference_steps": num_inference_steps
-                },
-                "is_training": False
+                }
             })
-            response = requests.post(url, headers=self.headers, data=payload, proxies=proxies_mappings, timeout=1000)
-            # print(proxies_mappings)
+            # proxies=proxies_mappings,
+            response = requests.post(url, headers=self.headers, data=payload, timeout=1000)
             response.raise_for_status()
 
             json_response = response.json()
@@ -98,7 +110,7 @@ class StabilityAI:
         return ''.join(random.choice(characters) for _ in range(length))
 
     def get_image_url(self, uuid,prompt):
-        url = f"https://replicate.com/api/predictions/{uuid}"
+        url = f"https://replicate.com/api/models/stability-ai/sdxl/versions/{self.ver}/predictions/{uuid}"
         response = requests.request("GET", url, headers=self.headers, timeout=1000).json()
         if response['status'] == "succeeded":
             output = {"prompt":prompt,"images":response['output']}
