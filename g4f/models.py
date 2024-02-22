@@ -1,7 +1,7 @@
 from __future__  import annotations
 from dataclasses import dataclass
 
-from g4f.Provider import perplexity
+from g4f.Provider import PerplexityLabs, SeaLLM, perplexity
 
 
 from .typing     import Union
@@ -73,10 +73,21 @@ concise = Model(
     base_provider = 'perplexity',
     best_provider = PerplexityAI)
 
+seallm = Model(
+    name          = "seallm",
+    base_provider = 'seallm',
+    best_provider = SeaLLM
+)
 perplexity_llama2_70b = Model(
     name          = "llama-2-70b-chat",
     base_provider = 'perplexity',
-    best_provider = PerplexityAI
+    best_provider = PerplexityLabs
+)
+
+perplexity_pplx_70b_online = Model(
+    name          = "pplx-70b-online",
+    base_provider = 'perplexity',
+    best_provider = PerplexityLabs
 )
 
 # GPT-3.5 / GPT-4

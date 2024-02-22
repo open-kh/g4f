@@ -17,45 +17,31 @@ class Labs:
     def _startSocket(self):
         self.history: list = []
         self.session: Session = Session()
-        self.user_agent: dict = { "User-Agent": "Ask/2.2.1/334 (iOS; iPhone) isiOSOnMac/false", "X-Client-Name": "Perplexity-iOS" }
+        # self.user_agent: dict = { "User-Agent": "Ask/2.2.1/334 (iOS; iPhone) isiOSOnMac/false", "X-Client-Name": "Perplexity-iOS" }
+        self.user_agent: dict = { 
+            "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0", 
+            "X-Firefox-Spdy": "h2"
+        }
         self.session.headers.update(self.user_agent)
         self._init_session_without_login()
 
-        self.t: str = self._get_t()
         self.sid: str = self._get_sid()
     
         self.queue: list = []
         self.finished: bool = True
-        assert self._ask_anonymous_user(), "failed to ask anonymous user"
         self.ws: WebSocketApp = self._init_websocket()
         self.ws_thread: Thread = Thread(target=self.ws.run_forever).start()
-
-        self._auth_session()
 
     def _init_session_without_login(self) -> None:
         # self.session.get(url=f"https://www.perplexity.ai/search/{str(uuid4())}")
         self.session.get(url="https://labs.perplexity.ai")
         # print(self.user_agent)
         self.session.headers.update(self.user_agent)
-    
-    def _auth_session(self) -> None:
-        self.session.get(url="https://www.perplexity.ai/api/auth/session")
-
-    def _get_t(self) -> str:
-        return format(getrandbits(32), "08x")
 
     def _get_sid(self) -> str:
         return loads(self.session.get(
             url=f"https://labs-api.perplexity.ai/socket.io/?transport=polling&EIO=4"
         ).text[1:])["sid"]
-
-    def _ask_anonymous_user(self) -> bool:
-        response = self.session.post(
-            url=f"https://labs-api.perplexity.ai/socket.io/?EIO=4&transport=polling&t={self.t}&sid={self.sid}",
-            data="40{\"jwt\":\"anonymous-ask-user\"}"
-        ).text
-
-        return response == "OK"
 
     def _get_cookies_str(self) -> str:
         cookies = ""
@@ -91,6 +77,8 @@ class Labs:
         headers: dict = self.user_agent
         headers["Cookie"] = self._get_cookies_str()
 
+        # print('new websocket',self.sid)
+
         return WebSocketApp(
             url=f"wss://labs-api.perplexity.ai/socket.io/?EIO=4&transport=websocket&sid={self.sid}",
             header=headers,
@@ -108,7 +96,10 @@ class Labs:
         self.finished = False
         self.history.append({"role": "user", "content": prompt, "priority": 0})
         # self.history
-        self.ws.send("42[\"perplexity_playground\",{\"version\":\"2.1\",\"source\":\"default\",\"model\":\"" + model + "\",\"messages\":" + dumps(self.history) + "}]")
+        # self.ws.send("42[\"perplexity_playground\",{\"version\":\"2.1\",\"source\":\"default\",\"model\":\"" + model + "\",\"messages\":" + dumps(self.history) + "}]")
+        mess = f'42["perplexity_labs",{"version":"2.2","source":"default","model":"{model}","messages":{prompt},"timezone":"Asia/Phnom_Penh"}]'
+        print(mess)
+        self.ws.send(mess)
     
     def chat(self, prompt: str, model: str = "mistral-7b-instruct") -> dict:
         self._c(prompt, model)

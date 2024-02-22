@@ -21,6 +21,8 @@ WORKDIR /
 # Copy the project's requirements file into the container.
 COPY requirements.txt .
 
+RUN pip install ollama
+
 # Upgrade pip for the latest features and install the project's Python dependencies.
 RUN pip install --upgrade pip && pip install -r requirements.txt
 # RUN pip install git+https://github.com/nathanrchn/perplexityai.git

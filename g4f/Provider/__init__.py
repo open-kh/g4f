@@ -40,7 +40,8 @@ from .GeekGpt         import GeekGpt
 from .StabilityAI     import StabilityAI
 from .SDXL            import SDXL
 from .ClaudeAI        import ClaudeAI
-from .PerplexityAILabs   import PerplexityAILabs
+from .PerplexityLabs    import PerplexityLabs
+from .SeaLLM         import SeaLLM
 from .PerplexityAI   import PerplexityAI
 from .Edge           import Edge
 
@@ -55,8 +56,9 @@ class ProviderUtils:
     convert: dict[str, BaseProvider] = {
         'Edge': Edge,
         'SDXL': SDXL,
+        'SeaLLM': SeaLLM,
         'StabilityAI': StabilityAI,
-        'PerplexityAILabs': PerplexityAILabs,
+        'PerplexityLabs': PerplexityLabs,
         'PerplexityAI': PerplexityAI,
         'AItianhu': AItianhu,
         'AItianhuSpace': AItianhuSpace,
@@ -131,6 +133,8 @@ __all__ = [
     'Edge',
     'ClaudeAI',
     'SDXL',
+    'SeaLLM',
+    'PerplexityLabs',
     'PerplexityAI',
     'StabilityAI',
     'BaseProvider',

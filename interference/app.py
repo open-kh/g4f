@@ -12,11 +12,10 @@ from g4f          import ChatCompletion, models
 import g4f
 from g4f.Provider import (
     Bard,
-    PerplexityAI,
+    PerplexityLabs,
     Phind,
     Bing,
-    HuggingChat,
-    Llama2,
+    SeaLLM,
 )
 
 app = Flask(__name__)
@@ -82,12 +81,16 @@ def chat_completions():
         model = 'gpt-3.5-turbo-16k'
         provider = Bing or Phind
 
+    elif model == 'seallm':
+        model = models.seallm
+        provider = SeaLLM
+
     elif model == 'perplexity':
-        model = "concise"
-        provider = PerplexityAI
+        model = models.perplexity_pplx_70b_online
+        provider = PerplexityLabs
 
     elif model == 'meta':
-        provider = PerplexityAI
+        provider = PerplexityLabs
         model = models.perplexity_llama2_70b
 
         myauth = '&#39'

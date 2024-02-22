@@ -23,3 +23,10 @@ asgiref
 fastapi
 uvicorn
 requests-ip-rotator==1.0.14
+py-arkose-generator
+async-property
+undetected-chromedriver
+brotli
+beautifulsoup4
+setuptools
+aiohttp_socks

@@ -137,3 +137,22 @@ class AsyncGeneratorProvider(AsyncProvider):
         **kwargs
     ) -> AsyncResult:
         raise NotImplementedError()
+
+
+class ProviderModelMixin:
+    default_model: str
+    models: list[str] = []
+    model_aliases: dict[str, str] = {}
+    
+    @classmethod
+    def get_models(cls) -> list[str]:
+        return cls.models
+    
+    @classmethod
+    def get_model(cls, model: str) -> str:
+        if not model:
+            model = cls.default_model
+        elif model in cls.model_aliases:
+            model = cls.model_aliases[model]
+            
+        return model

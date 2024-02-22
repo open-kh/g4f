@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+from __future__ import annotations
+
 import sys
 import asyncio
+from typing import Optional
 import webbrowser
+from aiohttp import BaseConnector
 
 from os              import path
 from asyncio         import AbstractEventLoop
@@ -112,3 +116,12 @@ def get_browser(user_data_dir: str = None):
         user_data_dir = user_config_dir("g4f")
 
     return Chrome(user_data_dir=user_data_dir)
+
+def get_connector(connector: BaseConnector = None, proxy: str = None) -> Optional[BaseConnector]:
+    if proxy and not connector:
+        try:
+            from aiohttp_socks import ProxyConnector
+            connector = ProxyConnector.from_url(proxy)
+        except ImportError:
+            raise MissingRequirementsError('Install "aiohttp_socks" package for proxy support')
+    return connector
