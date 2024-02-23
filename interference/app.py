@@ -8,6 +8,7 @@ from urllib.request import urlretrieve
 
 from flask        import Flask, request, Response, send_file
 from flask_cors   import CORS
+import ollama
 from g4f          import ChatCompletion, models
 import g4f
 from g4f.Provider import (
@@ -24,6 +25,15 @@ CORS(app)
 REPLICATE_API_TOKEN="r8_clGIfdHF8p7zDWF3LBz1Ri8WQT7xNBU2BqAb2"
 os.environ["REPLICATE_API_TOKEN"]=REPLICATE_API_TOKEN
 public_key = "pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWMLtscqsdiKmhI"
+
+TURN_TEMPLATE = "<|im_start|>\n{content}</s>"
+def format_prompt(conversations):
+    text = ''
+    for turn_id, turn in enumerate(conversations):
+        prompt = TURN_TEMPLATE.format(role=turn['role'], content=turn['content'])
+        text += prompt
+    return "<|im_start|>system\nI am a helpful, respectful, honest and safe AI assistant built by Mr. Phearum.</s>\n"+text
+
 
 class ResModel:
     def __init__(self,completion_id,model,chunk) -> None:
@@ -98,18 +108,47 @@ def chat_completions():
         provider = None
         model = models.default
 
-    
-    response = ChatCompletion.create(
-        model = model,
-        provider = provider,
-        stream = stream, 
-        messages = messages,
-        auth = myauth,
-        cookies = cookies
-    )
-
     completion_id = ''.join(random.choices(string.ascii_letters + string.digits, k=28))
     completion_timestamp = int(time.time())
+
+    def streaming():
+        for chunk in response:
+            mydict = ResModel(completion_id, model, chunk)
+            content = json.dumps(mydict.to_dict(), separators=(',', ':'))
+            yield f'data: {content}\n\n'
+            time.sleep(0.1)
+
+        mydict = ResModel(completion_id, model,True)
+        content = json.dumps(mydict.to_dict(), separators=(',', ':'))
+        yield f'data: {content}\n\n'
+
+    if model == 'seallm':
+        response = ollama.chat(
+            model= 'seallm',
+            messages=[
+                {'role': 'user', 'content': format_prompt(messages)}
+            ],
+            stream=True,
+        )
+        for data in response:
+            chunk = data['message']['content']
+            mydict = ResModel(completion_id, model, chunk)
+            content = json.dumps(mydict.to_dict(), separators=(',', ':'))
+            yield f'data: {content}\n\n'
+            time.sleep(0.1)
+
+        mydict = ResModel(completion_id, model,True)
+        content = json.dumps(mydict.to_dict(), separators=(',', ':'))
+        yield f'data: {content}\n\n'
+    else:
+        response = ChatCompletion.create(
+            model = model,
+            provider = provider,
+            stream = stream, 
+            messages = messages,
+            auth = myauth,
+            cookies = cookies
+        )
 
     if not stream:
         if model == 'bard':
@@ -135,17 +174,6 @@ def chat_completions():
                 'total_tokens': None,
             },
         }
-
-    def streaming():
-        for chunk in response:
-            mydict = ResModel(completion_id, model,chunk)
-            content = json.dumps(mydict.to_dict(), separators=(',', ':'))
-            yield f'data: {content}\n\n'
-            time.sleep(0.1)
-
-        mydict = ResModel(completion_id, model,True)
-        content = json.dumps(mydict.to_dict(), separators=(',', ':'))
-        yield f'data: {content}\n\n'
 
     return app.response_class(streaming(), mimetype='text/event-stream')
 

@@ -23,15 +23,17 @@ class SeaLLM(AsyncGeneratorProvider, ProviderModelMixin):
         messages: Messages,
         **kwargs
     ):
-        stream = ollama.chat(
+        return ollama.chat(
             model= model if model in cls.models else cls.default_model,
             messages=[
                 {'role': 'user', 'content': format_prompt(messages)}
             ],
             stream=True,
         )
-        for chunk in stream:
-            yield chunk['message']['content']
+        # for chunk in stream:
+            # yield (chunk['message']['content']).lstrip()
+            # print(chunk['message']['content'], end='', flush=True)
+            # yield chunk['message']['content']
         # for chunk in yield_content_from_stream(stream):
         #     print(chunk['message']['content'], end='', flush=True)
 
@@ -41,7 +43,6 @@ def yield_content_from_stream(stream):
         yield chunk['message']['content']
 
 TURN_TEMPLATE = "<|im_start|>\n{content}</s>"
-
 def format_prompt(conversations):
     text = ''
     for turn_id, turn in enumerate(conversations):
