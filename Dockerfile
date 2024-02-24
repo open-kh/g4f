@@ -31,10 +31,6 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # This may include all code, assets, and configuration files required to run the application.
 COPY . .
 
-# Install additional requirements specific to the interference module/package.
-RUN pip install -r interference/requirements.txt
-
-
 # Expose port 1337
 EXPOSE 1337
 
