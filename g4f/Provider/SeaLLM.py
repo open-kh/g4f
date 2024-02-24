@@ -1,15 +1,16 @@
 from __future__ import annotations
+from ast import Dict
 import json
+from re import I
 
-from aiohttp import BaseConnector
+from g4f.Provider.helper import get_event_loop, seallm_format_prompt
 
-from .base_provider import AsyncGeneratorProvider, ProviderModelMixin
+from .base_provider import AsyncGeneratorProvider
 import ollama
 
-from ..typing import Messages
+from ..typing import AsyncResult, Messages
 
-class SeaLLM(AsyncGeneratorProvider, ProviderModelMixin):
-    url = "https://labs.perplexity.ai"    
+class SeaLLM(AsyncGeneratorProvider):
     working = True
     default_model = 'seallm'
     models = [
@@ -17,35 +18,25 @@ class SeaLLM(AsyncGeneratorProvider, ProviderModelMixin):
     ]
 
     @classmethod
-    def create_async_generator(
+    def _chat(cls, chunk: dict) -> str:
+        if not chunk.get('done'):
+            return chunk['response']
+        return ''
+
+    @classmethod
+    async def create_async_generator(
         cls,
         model: str,
         messages: Messages,
         **kwargs
-    ):
-        return ollama.chat(
-            model= model if model in cls.models else cls.default_model,
-            messages=[
-                {'role': 'user', 'content': format_prompt(messages)}
-            ],
-            stream=True,
-        )
-        # for chunk in stream:
-            # yield (chunk['message']['content']).lstrip()
-            # print(chunk['message']['content'], end='', flush=True)
-            # yield chunk['message']['content']
-        # for chunk in yield_content_from_stream(stream):
-        #     print(chunk['message']['content'], end='', flush=True)
-
-
-def yield_content_from_stream(stream):
-    for chunk in stream:
-        yield chunk['message']['content']
-
-TURN_TEMPLATE = "<|im_start|>\n{content}</s>"
-def format_prompt(conversations):
-    text = ''
-    for turn_id, turn in enumerate(conversations):
-        prompt = TURN_TEMPLATE.format(role=turn['role'], content=turn['content'])
-        text += prompt
-    return "<|im_start|>system\nI am a helpful, respectful, honest and safe AI assistant built by Mr. Phearum.</s>\n"+text
+    )-> AsyncResult:
+        streaming = ollama.generate(model= model if model in cls.models else cls.default_model,
+                                    prompt=seallm_format_prompt(messages),
+                                    stream=True)
+        try:
+            for chunk in streaming:
+                if chunk['done'] is True:
+                    break
+                yield chunk['response']
+        except Exception as e:
+            print("Error: {0}".format(e))

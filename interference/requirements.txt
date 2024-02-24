@@ -1,8 +1,0 @@
-flask
-flask-cors
-watchdog~=3.0.0
-transformers
-replicate
-requests
-# tensorflow
-# torch

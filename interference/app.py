@@ -3,21 +3,20 @@ import json
 import time
 import random
 import string
+import ollama
 from tokenize import String
 from urllib.request import urlretrieve
 
 from flask        import Flask, request, Response, send_file
 from flask_cors   import CORS
-import ollama
 from g4f          import ChatCompletion, models
-import g4f
 from g4f.Provider import (
-    Bard,
     PerplexityLabs,
     Phind,
     Bing,
     SeaLLM,
 )
+from g4f.Provider.helper import response_callback, seallm_format_prompt
 
 app = Flask(__name__)
 CORS(app)
@@ -26,45 +25,9 @@ REPLICATE_API_TOKEN="r8_clGIfdHF8p7zDWF3LBz1Ri8WQT7xNBU2BqAb2"
 os.environ["REPLICATE_API_TOKEN"]=REPLICATE_API_TOKEN
 public_key = "pJNAtlAqCHbUDTrDudubjSKeUVgbOMvkRQWMLtscqsdiKmhI"
 
-TURN_TEMPLATE = "<|im_start|>\n{content}</s>"
-def format_prompt(conversations):
-    text = ''
-    for turn_id, turn in enumerate(conversations):
-        prompt = TURN_TEMPLATE.format(role=turn['role'], content=turn['content'])
-        text += prompt
-    return "<|im_start|>system\nI am a helpful, respectful, honest and safe AI assistant built by Mr. Phearum.</s>\n"+text
-
-
-class ResModel:
-    def __init__(self,completion_id,model,chunk) -> None:
-        self.model = model if model is String else "default"
-        self.completion_id = completion_id
-        self.chunk = chunk
-
-    def to_dict(self):
-        finish = None
-        if self.chunk is True:
-            finish = 'stop'
-            self.chunk = {}
-        else:
-            self.chunk = {'content': self.chunk}
-        return {
-            'id': f'chatcmpl-{self.completion_id}',
-            'object': 'chat.completion.chunk',
-            'created': int(time.time()),
-            'model': self.model,
-            'choices': [
-                {
-                    'index': 0,
-                    'delta': self.chunk,
-                    'finish_reason': finish,
-                }
-            ],
-        }
-
-@app.route('/chat/completions', methods=['POST'])
+    
+@app.route('/chat/completions', methods=['POST']) # type: ignore
 def chat_completions():
-    # model    = request.get_json().get('model', 'gpt-3.5-turbo')
     model    = request.get_json().get('model', 'gpt-4')
     stream   = request.get_json().get('stream', False)
     messages = request.get_json().get('messages')
@@ -84,9 +47,6 @@ def chat_completions():
     if model == 'bing':
         model = 'gpt-4'
         provider = Bing
-    elif model == 'bard':
-        provider = Bard
-        stream = False
     elif model == 'openai':
         model = 'gpt-3.5-turbo-16k'
         provider = Bing or Phind
@@ -100,81 +60,40 @@ def chat_completions():
         provider = PerplexityLabs
 
     elif model == 'meta':
+        model = models.perplexity_pplx_70b
         provider = PerplexityLabs
-        model = models.perplexity_llama2_70b
 
-        myauth = '&#39'
     else:
         provider = None
         model = models.default
 
     completion_id = ''.join(random.choices(string.ascii_letters + string.digits, k=28))
-    completion_timestamp = int(time.time())
 
+    response = ChatCompletion.create(
+        model = model,
+        provider = provider,
+        stream = stream, 
+        messages = messages,
+        auth = myauth,
+        cookies = cookies
+    )
+    
+    def _chat(chuck):
+        if chuck['done'] is False:
+            return chuck['response']
+        else:
+            return ''
+    
     def streaming():
         for chunk in response:
-            mydict = ResModel(completion_id, model, chunk)
+            mydict = response_callback(completion_id, model, chunk)
             content = json.dumps(mydict.to_dict(), separators=(',', ':'))
             yield f'data: {content}\n\n'
             time.sleep(0.1)
 
-        mydict = ResModel(completion_id, model,True)
+        mydict = response_callback(completion_id, model,True)
         content = json.dumps(mydict.to_dict(), separators=(',', ':'))
         yield f'data: {content}\n\n'
-
-    if model == 'seallm':
-        response = ollama.chat(
-            model= 'seallm',
-            messages=[
-                {'role': 'user', 'content': format_prompt(messages)}
-            ],
-            stream=True,
-        )
-        for data in response:
-            chunk = data['message']['content']
-            mydict = ResModel(completion_id, model, chunk)
-            content = json.dumps(mydict.to_dict(), separators=(',', ':'))
-            yield f'data: {content}\n\n'
-            time.sleep(0.1)
-
-        mydict = ResModel(completion_id, model,True)
-        content = json.dumps(mydict.to_dict(), separators=(',', ':'))
-        yield f'data: {content}\n\n'
-    else:
-        response = ChatCompletion.create(
-            model = model,
-            provider = provider,
-            stream = stream, 
-            messages = messages,
-            auth = myauth,
-            cookies = cookies
-        )
-
-    if not stream:
-        if model == 'bard':
-            return response
-        return {
-            'id': f'chatcmpl-{completion_id}',
-            'object': 'chat.completion',
-            'created': completion_timestamp,
-            'model': model,
-            'choices': [
-                {
-                    'index': 0,
-                    'message': {
-                        'role': 'assistant',
-                        'content': response,
-                    },
-                    'finish_reason': 'stop',
-                }
-            ],
-            'usage': {
-                'prompt_tokens': None,
-                'completion_tokens': None,
-                'total_tokens': None,
-            },
-        }
-
     return app.response_class(streaming(), mimetype='text/event-stream')
 
 @app.route("/chat/image_generation", methods=['POST'])

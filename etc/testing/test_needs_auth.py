@@ -9,13 +9,7 @@ from  testing.log_time import log_time, log_time_async, log_time_yield
 
 
 _providers = [
-    g4f.Provider.H2o,
-    g4f.Provider.You,
-    g4f.Provider.HuggingChat,
-    g4f.Provider.OpenAssistant,
-    g4f.Provider.Bing,
-    g4f.Provider.Ails,
-    g4f.Provider.Bard
+    g4f.Provider.Bing
 ]
 
 _instruct = "Hello, are you GPT 4?."
@@ -42,12 +36,12 @@ gpt_access_token = '16117916cb06b62b8.7931458704|r=ap-southeast-1|meta=3|metabgc
 for response in log_time_yield(
     g4f.ChatCompletion.create,
     # model= g4f.models.default,
-    model= g4f.models.llama70b_v2_chat,
+    model= g4f.models.concise,
     messages=[{
             "role": "system",
             "content": "You are Open Brain"
         },{"role": "user", "content": _instruct}],
-    provider=g4f.Provider.Vercel,
+    provider=g4f.Provider.Bing,
     # access_token = gpt_access_token,
     # provider=g4f.Provider.Theb,
     # cookies=g4f.get_cookies(".huggingface.co"),

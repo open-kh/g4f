@@ -30,3 +30,6 @@ brotli
 beautifulsoup4
 setuptools
 aiohttp_socks
+flask
+flask-cors
+watchdog~=3.0.0

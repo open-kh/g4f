@@ -3,10 +3,14 @@ from __future__ import annotations
 from __future__ import annotations
 
 import sys
+import time
+import random
+import string
+from tokenize import String
 import asyncio
 from typing import Optional
 import webbrowser
-from aiohttp import BaseConnector
+from aiohttp import BaseConnector, ClientConnectionError, ClientSession
 
 from os              import path
 from asyncio         import AbstractEventLoop
@@ -125,3 +129,93 @@ def get_connector(connector: BaseConnector = None, proxy: str = None) -> Optiona
         except ImportError:
             raise MissingRequirementsError('Install "aiohttp_socks" package for proxy support')
     return connector
+
+
+completion_id = ''.join(random.choices(string.ascii_letters + string.digits, k=28))
+completion_timestamp = int(time.time())
+
+class response_callback:
+    def __init__(self,completion_id,model,chunk) -> None:
+        self.model = model if model is String else "default"
+        self.completion_id = completion_id
+        self.chunk = chunk
+
+    def to_dict(self):
+        finish = None
+        if self.chunk is True:
+            finish = 'stop'
+            self.chunk = {}
+        else:
+            self.chunk = {'content': self.chunk}
+        return {
+            'id': f'chatcmpl-{self.completion_id}',
+            'object': 'chat.completion.chunk',
+            'created': int(time.time()),
+            'model': self.model,
+            'choices': [
+                {
+                    'index': 0,
+                    'delta': self.chunk,
+                    'finish_reason': finish,
+                }
+            ],
+        }
+    
+
+TURN_TEMPLATE = "###{role}:\n{content}"
+FORMAT_TEMPLATE = "###Instruction:\nI am a helpful, respectful, honest and safe AI assistant built by Mr. Phearum.\n{message}\n###Response:\n"
+TURN_PREFIX = "<|im_start|>{role}\n"
+
+def seallm_format_prompt(conversations, add_assistant_prefix = False, system_prompt=None):
+    # conversations: list of dict with key `role` and `content` (openai format)
+    if conversations[0]['role'] != 'system' and system_prompt is not None:
+        conversations = [{"role": "system", "content": system_prompt}] + conversations
+    text = ''
+    for turn_id, turn in enumerate(conversations):
+        prompt = TURN_TEMPLATE.format(role= "Question" if turn['role'] == 'user' else "Response", content=turn['content'])
+        text += prompt
+    if add_assistant_prefix:
+        prompt = TURN_PREFIX.format(role='assistant')
+        text += prompt   
+    # print(text) 
+    return FORMAT_TEMPLATE.format(message=text)
+
+
+class WebSocketClient:
+
+    def __init__(self, url):
+        self.url = url
+        self.session = ClientSession()
+        self.ws = None
+        self.queue: list = []
+        self.finished = False
+
+    async def connect(self):
+        while True:
+            try:
+                self.ws = await self.session.ws_connect(self.url)
+                print("Connected to", self.url)
+                await self.receive()
+            except ClientConnectionError as e:
+                print("Connection error:", e)
+            print("Reconnecting to", self.url)
+            await asyncio.sleep(1) # wait before reconnecting
+
+    async def receive(self):
+        async for msg in self.ws:
+            # handle websocket messages here
+            if msg == "2":
+                self.ws.send("3")
+            elif msg.startswith("42"):
+                msg = loads(msg[2:])[1]
+                if "status" not in msg:
+                    self.queue.append(msg)
+                elif msg["status"] == "completed":
+                    self.finished = True
+                    self.history.append({"role": "assistant", "content": msg["output"], "priority": 0})
+                elif msg["status"] == "failed":
+                    self.finished = True
+            print(msg)
+
+    async def close(self):
+        await self.session.close()
