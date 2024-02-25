@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import time
 import random
@@ -11,6 +12,7 @@ from flask        import Flask, request, Response, send_file
 from flask_cors   import CORS
 from g4f          import ChatCompletion, models
 from g4f.Provider import (
+    Ollama,
     PerplexityLabs,
     Phind,
     Bing,
@@ -47,6 +49,11 @@ def chat_completions():
     if model == 'bing':
         model = 'gpt-4'
         provider = Bing
+    
+    elif model.startswith('ollama'):
+        model = model.split('/')[1]
+        provider = Ollama
+
     elif model == 'openai':
         model = 'gpt-3.5-turbo-16k'
         provider = Bing or Phind
@@ -147,4 +154,7 @@ def main():
     app.run(host='0.0.0.0', port=1337, debug=True)
 
 if __name__ == '__main__':
-    main()
+    arguments = sys.argv[1:]
+    for port in arguments:
+        app.run(host='0.0.0.0', port=int(port), debug=True)
+    # main()

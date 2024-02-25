@@ -24,8 +24,9 @@ def get_model_and_provider(model    : Union[Model, str],
                            stream   : bool,
                            ignored  : List[str] = None,
                            ignore_working: bool = False) -> tuple[Model, type[BaseProvider]]:
-    
-    if isinstance(model, str):
+    if model is str:
+        model = model.lower()
+    elif isinstance(model, str):
         if model in ModelUtils.convert:
             model = ModelUtils.convert[model]
         else:
