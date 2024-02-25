@@ -150,11 +150,10 @@ def image_generate_temp():
 def send_static_file(path):
     return send_file(f"/out/{path}")
 
-def main():
-    app.run(host='0.0.0.0', port=1337, debug=True)
+def main(port:int=1337):
+    app.run(host='0.0.0.0', port=port, debug=True)
 
 if __name__ == '__main__':
     arguments = sys.argv[1:]
     for port in arguments:
-        app.run(host='0.0.0.0', port=int(port), debug=True)
-    # main()
+        main(int(port))
