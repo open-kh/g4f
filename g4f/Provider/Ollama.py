@@ -1,14 +1,9 @@
 from __future__ import annotations
-from ast import Dict
-import json
-from re import I
+import ollama
 
-from torch import mode
-
-from g4f.Provider.helper import get_event_loop, seallm_format_prompt
+from g4f.Provider.helper import seallm_format_prompt
 
 from .base_provider import AsyncGeneratorProvider
-import ollama
 
 from ..typing import AsyncResult, Messages
 
