@@ -4,8 +4,6 @@ import json
 import time
 import random
 import string
-import ollama
-from tokenize import String
 from urllib.request import urlretrieve
 
 from flask        import Flask, request, Response, send_file
