@@ -8,7 +8,6 @@ from .Llama2        import Llama2
 from .PerplexityLabs    import PerplexityLabs
 from .SeaLLM         import SeaLLM
 from .Ollama         import Ollama
-from .PerplexityAI   import PerplexityAI
 
 from .base_provider  import BaseProvider, AsyncProvider, AsyncGeneratorProvider
 from .retry_provider import RetryProvider
@@ -20,7 +19,6 @@ class ProviderUtils:
         'Ollama': Ollama,
         'StabilityAI': StabilityAI,
         'PerplexityLabs': PerplexityLabs,
-        'PerplexityAI': PerplexityAI,
         'Llama2': Llama2,
         'Bing': Bing,
         'Phind': Phind,
@@ -36,7 +34,6 @@ __all__ = [
     'Ollama',
     'SeaLLM',
     'PerplexityLabs',
-    'PerplexityAI',
     'StabilityAI',
     'BaseProvider',
     'AsyncProvider',
