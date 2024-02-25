@@ -16,7 +16,7 @@ from g4f.Provider import (
     Bing,
     SeaLLM,
 )
-from g4f.Provider.helper import response_callback, seallm_format_prompt
+from g4f.Provider.helper import response_callback
 
 app = Flask(__name__)
 CORS(app)

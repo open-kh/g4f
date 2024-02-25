@@ -1,5 +1,4 @@
 from __future__ import annotations
-import ollama
 
 from g4f.Provider.helper import seallm_format_prompt
 
